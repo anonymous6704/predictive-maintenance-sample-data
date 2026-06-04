@@ -4,6 +4,14 @@
 - Overall status: PASS
 
 - PASS: Required file existence - All required files are present.
+- PASS: Documentation file exists: Root README - README.md exists.
+- PASS: Documentation file exists: data_samples README - data_samples\README.md exists.
+- PASS: Documentation file exists: data directory README - data_samples\data\README.md exists.
+- PASS: Documentation file exists: data format specification - data_samples\data_format_specification.md exists.
+- PASS: Specification headings - All required major headings are present.
+- PASS: Root README sections - All required root README sections are present.
+- PASS: data_samples README sections - All required data_samples README sections are present.
+- PASS: data/README sections - All required data directory index sections are present.
 - PASS: JSON load: data_samples/data/test_set_samples/sample_survival_cases.json - Loaded successfully.
 - PASS: JSON load: data_samples/data/test_set_samples/sample_survival_cases_schema.json - Loaded successfully.
 - PASS: JSON load: data_samples/data/survival_frame_samples/survival_frame_schema.json - Loaded successfully.
@@ -36,3 +44,5 @@
 - PASS: Feature leakage audit status - All leakage audit statuses are pass/passed.
 - PASS: Split audit status - All split audit statuses are pass/passed.
 - PASS: Split audit overlap - All overlap_unit_count values are 0.
+- PASS: Forbidden folder names - No forbidden folder names found.
+- PASS: Raw benchmark claim scan - No forbidden raw/full benchmark inclusion claims found.

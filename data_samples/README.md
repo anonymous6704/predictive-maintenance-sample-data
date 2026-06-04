@@ -2,168 +2,94 @@
 
 ## Overview
 
-This folder contains sample data structures used by the OCEAN-MO-CDSF framework for censored predictive-maintenance survival analysis.
+This folder documents the sample data formats used by OCEAN-MO-CDSF for censored predictive-maintenance survival analysis.
 
-The samples illustrate data schemas, censoring/event labels, survival frames, audit tables, model-result records, and HPO traces.
+## Purpose
 
-These are small illustrative samples, not the full dataset.
-
-No raw industrial data, model weights, checkpoints, or private data are included.
+- Inspect the expected survival-frame schema
+- Understand event and censoring labels
+- Understand audit-table formats
+- Understand model-result and HPO-trace formats
+- Run lightweight validation without full raw datasets
 
 ## Dataset Components
 
-- Test Set Samples
-- Survival Frame Samples
-- Audit Samples
-- Result Samples
-- HPO Samples
+| Component | Folder | Purpose | Main files |
+| --- | --- | --- | --- |
+| Test set samples | `data/test_set_samples/` | Survival and censoring case examples | `sample_survival_cases.json` |
+| Survival frame samples | `data/survival_frame_samples/` | Model input frame format | `survival_frame_sample.csv` |
+| Audit samples | `data/audit_samples/` | Data, leakage, and split audit examples | `dataset_audit_sample.csv`, `feature_leakage_audit_sample.csv`, `split_audit_sample.csv` |
+| Result samples | `data/result_samples/` | Benchmark metric table example | `model_result_sample.csv` |
+| HPO samples | `data/hpo_samples/` | Selected config and candidate trace examples | `hpo_selected_config_sample.json`, `hpo_candidate_trace_sample.csv` |
+
+If present, `data/quick_view/` may provide convenience copies and `data/processed_mini_samples/` may provide small processed or anonymized mini frames.
 
 ## Directory Tree
 
 ```text
 data_samples/
-|-- README.md
-|-- data_format_specification.md
-|-- .gitignore
-|-- data/
-    |-- test_set_samples/
-    |   |-- README.md
-    |   |-- sample_survival_cases.json
-    |   `-- sample_survival_cases_schema.json
-    |-- survival_frame_samples/
-    |   |-- README.md
-    |   |-- survival_frame_sample.csv
-    |   |-- survival_frame_schema.json
-    |   `-- survival_frame_column_dictionary.csv
-    |-- audit_samples/
-    |   |-- README.md
-    |   |-- dataset_audit_sample.csv
-    |   |-- feature_leakage_audit_sample.csv
-    |   `-- split_audit_sample.csv
-    |-- result_samples/
-    |   |-- README.md
-    |   `-- model_result_sample.csv
-    `-- hpo_samples/
-        |-- README.md
-        |-- hpo_selected_config_sample.json
-        `-- hpo_candidate_trace_sample.csv
+├── README.md
+├── .gitignore
+├── data_format_specification.md
+├── VALIDATION_REPORT.md
+└── data/
+    ├── README.md
+    ├── test_set_samples/
+    ├── survival_frame_samples/
+    ├── audit_samples/
+    ├── result_samples/
+    └── hpo_samples/
 ```
-
-## Test Set Samples
-
-### Purpose
-Illustrative survival test cases showing observed failures, right-censoring, administrative censoring, padding, and missingness.
-
-### Main Files
-- `data/test_set_samples/sample_survival_cases.json`
-- `data/test_set_samples/sample_survival_cases_schema.json`
-
-### Format
-JSON array of compact case records with a companion JSON schema.
-
-### Example Use
-Load a small set of survival cases for documentation, schema checks, and reader-facing examples.
-
-## Survival Frame Samples
-
-### Purpose
-Illustrative tabular survival frame records for censored predictive-maintenance modeling.
-
-### Main Files
-- `data/survival_frame_samples/survival_frame_sample.csv`
-- `data/survival_frame_samples/survival_frame_schema.json`
-- `data/survival_frame_samples/survival_frame_column_dictionary.csv`
-
-### Format
-CSV table with target, metadata, and feature columns plus a column dictionary.
-
-### Example Use
-Load the survival frame into pandas, validate columns, and build feature matrices that exclude outcome and metadata fields.
-
-## Audit Samples
-
-### Purpose
-Compact dataset-audit, leakage-audit, and split-audit records for reproducibility and review.
-
-### Main Files
-- `data/audit_samples/dataset_audit_sample.csv`
-- `data/audit_samples/feature_leakage_audit_sample.csv`
-- `data/audit_samples/split_audit_sample.csv`
-
-### Format
-CSV audit tables with pass/fail style statuses and simple boolean-like fields.
-
-### Example Use
-Load audits during documentation review to confirm censoring coverage, leakage checks, and unit-level splits.
-
-## Result Samples
-
-### Purpose
-Illustrative model-result records that separate validation selection from final test reporting.
-
-### Main Files
-- `data/result_samples/model_result_sample.csv`
-
-### Format
-CSV table with validation and test metrics, runtime, and selection flags.
-
-### Example Use
-Load a result table to compare model families and trace which configuration was selected by validation.
-
-## HPO Samples
-
-### Purpose
-Illustrative hyperparameter-optimization traces and selected configurations.
-
-### Main Files
-- `data/hpo_samples/hpo_selected_config_sample.json`
-- `data/hpo_samples/hpo_candidate_trace_sample.csv`
-
-### Format
-JSON plus CSV showing selected configurations, multi-fidelity promotions, and candidate trace history.
-
-### Example Use
-Load the selected config JSON, inspect the candidate trace, and explain how validation metrics drove the final choice.
 
 ## Usage Examples
 
 ```python
-import csv
 import json
 from pathlib import Path
 
-root = Path("data_samples/data")
-
-with open(root / "test_set_samples" / "sample_survival_cases.json", "r", encoding="utf-8") as f:
-    cases = json.load(f)
-
-with open(root / "survival_frame_samples" / "survival_frame_sample.csv", "r", encoding="utf-8", newline="") as f:
-    rows = list(csv.DictReader(f))
-
-with open(root / "audit_samples" / "dataset_audit_sample.csv", "r", encoding="utf-8", newline="") as f:
-    audits = list(csv.DictReader(f))
+path = Path("data_samples/data/test_set_samples/sample_survival_cases.json")
+cases = json.loads(path.read_text(encoding="utf-8"))
+print(cases["cases"][0] if isinstance(cases, dict) else cases[0])
 ```
 
 ```python
-import csv
-import json
+import pandas as pd
 
-with open("data_samples/data/hpo_samples/hpo_selected_config_sample.json", "r", encoding="utf-8") as f:
-    selected = json.load(f)
-
-with open("data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv", "r", encoding="utf-8", newline="") as f:
-    candidates = list(csv.DictReader(f))
+df = pd.read_csv("data_samples/data/survival_frame_samples/survival_frame_sample.csv")
+print(df.head())
 ```
 
-## Notes
+```python
+audit = pd.read_csv("data_samples/data/audit_samples/dataset_audit_sample.csv")
+print(audit[["dataset", "event_rate", "status"]])
+```
 
-- `event=1` means observed failure.
-- `event=0` means right-censored.
-- Test metrics are reported only after validation selection.
-- C-MAPSS administrative censoring is a stress-test setting if used.
-- SurvSHAP-style explanations, if used elsewhere in the paper, are model-behavior explanations, not causal claims.
-- These samples are for format demonstration only.
+```python
+results = pd.read_csv("data_samples/data/result_samples/model_result_sample.csv")
+print(results.sort_values("validation_calibrated_monotone_ipcw_ibs").head())
+```
 
-## Anonymization and Research Use
+```python
+trace = pd.read_csv("data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv")
+print(trace.groupby(["model", "fidelity_level"]).size())
+```
 
-All values in this folder are synthetic or anonymized and are intended for reproducibility, schema demonstration, and documentation. They are not a substitute for the full benchmark dataset or any proprietary industrial data.
+## Event and Censoring Interpretation
+
+- `event=1`: observed failure
+- `event=0`: right-censored
+- `duration`: observed time-to-event or time-to-censoring
+- `censoring_rate`: administrative censoring setting or scenario indicator
+- `censoring_rate_observed`: observed censoring proportion in an audit table
+
+## Feature Leakage Warning
+
+`duration`, `event`, `event_type`, `unit_id`, `anchor_time`, `failure_time`, `rul`, and `censor_time` must not be used as predictive features.
+
+## Validation and Test Separation
+
+Validation metrics are used for model selection. Test metrics are reported only after the selected model or configuration is fixed.
+
+## Data Availability Note
+
+These files are sufficient for schema inspection and validator testing, not for reproducing paper-scale benchmark metrics.

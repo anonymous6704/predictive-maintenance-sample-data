@@ -1054,6 +1054,692 @@ HPO_CANDIDATE_TRACE_ROWS = [
 ]
 
 
+ROOT_README = dedent(
+    """
+    # Predictive Maintenance Sample Data
+
+    ## Overview
+
+    This repository provides small illustrative data samples for the OCEAN-MO-CDSF framework, an evidence-driven multi-objective deep survival framework for censored predictive maintenance.
+
+    ## What This Repository Contains
+
+    - Survival test cases
+    - Survival frame samples
+    - Audit table samples
+    - Model result samples
+    - HPO trace samples
+    - Validation scripts
+
+    ## What This Repository Does Not Contain
+
+    - It does not contain the full benchmark dataset.
+    - It does not redistribute raw Azure, Scania, or C-MAPSS data.
+    - It does not contain model checkpoints, trained weights, raw industrial logs, or private data.
+    - It does not contain ontology, KG, or graph data.
+
+    ## Directory Structure
+
+    ```text
+    predictive-maintenance-sample-data/
+    ├── README.md
+    ├── .gitignore
+    ├── scripts/
+    │   ├── create_data_samples.py
+    │   └── validate_data_samples.py
+    └── data_samples/
+        ├── README.md
+        ├── data_format_specification.md
+        ├── VALIDATION_REPORT.md
+        └── data/
+            ├── README.md
+            ├── test_set_samples/
+            ├── survival_frame_samples/
+            ├── audit_samples/
+            ├── result_samples/
+            └── hpo_samples/
+    ```
+
+    ## Quick Start
+
+    ```bash
+    python scripts/create_data_samples.py
+    python scripts/validate_data_samples.py
+    ```
+
+    ## Main Data Format
+
+    The central format is a multi-horizon survival frame with metadata columns, event/censoring labels, and feature-summary columns.
+
+    ## Validation
+
+    The validator checks required files, JSON and CSV readability, event and duration validity, censoring-rate range, horizon monotonicity, feature leakage column names, and HPO trace consistency.
+
+    ## Citation / Paper Placeholder
+
+    If you use this sample repository, please cite the associated OCEAN-MO-CDSF paper once available.
+
+    ## License / Data Note
+
+    All provided values are illustrative and anonymized/synthetic for format demonstration.
+    """
+).strip() + "\n"
+
+DATA_SAMPLES_README = dedent(
+    """
+    # OCEAN-MO-CDSF Dataset Samples
+
+    ## Overview
+
+    This folder documents the sample data formats used by OCEAN-MO-CDSF for censored predictive-maintenance survival analysis.
+
+    ## Purpose
+
+    - Inspect the expected survival-frame schema
+    - Understand event and censoring labels
+    - Understand audit-table formats
+    - Understand model-result and HPO-trace formats
+    - Run lightweight validation without full raw datasets
+
+    ## Dataset Components
+
+    | Component | Folder | Purpose | Main files |
+    | --- | --- | --- | --- |
+    | Test set samples | `data/test_set_samples/` | Survival and censoring case examples | `sample_survival_cases.json` |
+    | Survival frame samples | `data/survival_frame_samples/` | Model input frame format | `survival_frame_sample.csv` |
+    | Audit samples | `data/audit_samples/` | Data, leakage, and split audit examples | `dataset_audit_sample.csv`, `feature_leakage_audit_sample.csv`, `split_audit_sample.csv` |
+    | Result samples | `data/result_samples/` | Benchmark metric table example | `model_result_sample.csv` |
+    | HPO samples | `data/hpo_samples/` | Selected config and candidate trace examples | `hpo_selected_config_sample.json`, `hpo_candidate_trace_sample.csv` |
+
+    If present, `data/quick_view/` may provide convenience copies and `data/processed_mini_samples/` may provide small processed or anonymized mini frames.
+
+    ## Directory Tree
+
+    ```text
+    data_samples/
+    ├── README.md
+    ├── .gitignore
+    ├── data_format_specification.md
+    ├── VALIDATION_REPORT.md
+    └── data/
+        ├── README.md
+        ├── test_set_samples/
+        ├── survival_frame_samples/
+        ├── audit_samples/
+        ├── result_samples/
+        └── hpo_samples/
+    ```
+
+    ## Usage Examples
+
+    ```python
+    import json
+    from pathlib import Path
+
+    path = Path("data_samples/data/test_set_samples/sample_survival_cases.json")
+    cases = json.loads(path.read_text(encoding="utf-8"))
+    print(cases["cases"][0] if isinstance(cases, dict) else cases[0])
+    ```
+
+    ```python
+    import pandas as pd
+
+    df = pd.read_csv("data_samples/data/survival_frame_samples/survival_frame_sample.csv")
+    print(df.head())
+    ```
+
+    ```python
+    audit = pd.read_csv("data_samples/data/audit_samples/dataset_audit_sample.csv")
+    print(audit[["dataset", "event_rate", "status"]])
+    ```
+
+    ```python
+    results = pd.read_csv("data_samples/data/result_samples/model_result_sample.csv")
+    print(results.sort_values("validation_calibrated_monotone_ipcw_ibs").head())
+    ```
+
+    ```python
+    trace = pd.read_csv("data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv")
+    print(trace.groupby(["model", "fidelity_level"]).size())
+    ```
+
+    ## Event and Censoring Interpretation
+
+    - `event=1`: observed failure
+    - `event=0`: right-censored
+    - `duration`: observed time-to-event or time-to-censoring
+    - `censoring_rate`: administrative censoring setting or scenario indicator
+    - `censoring_rate_observed`: observed censoring proportion in an audit table
+
+    ## Feature Leakage Warning
+
+    `duration`, `event`, `event_type`, `unit_id`, `anchor_time`, `failure_time`, `rul`, and `censor_time` must not be used as predictive features.
+
+    ## Validation and Test Separation
+
+    Validation metrics are used for model selection. Test metrics are reported only after the selected model or configuration is fixed.
+
+    ## Data Availability Note
+
+    These files are sufficient for schema inspection and validator testing, not for reproducing paper-scale benchmark metrics.
+    """
+).strip() + "\n"
+
+DATA_DIR_README = dedent(
+    """
+    # Data Directory Index
+
+    ## Overview
+
+    This directory contains grouped sample files for quick navigation.
+
+    ## Folder Index
+
+    | Folder | Contains | Main data file |
+    | --- | --- | --- |
+    | `test_set_samples/` | Survival case examples | `sample_survival_cases.json` |
+    | `survival_frame_samples/` | Model input frame example | `survival_frame_sample.csv` |
+    | `audit_samples/` | Audit table examples | `dataset_audit_sample.csv` |
+    | `result_samples/` | Benchmark result example | `model_result_sample.csv` |
+    | `hpo_samples/` | HPO config and trace examples | `hpo_candidate_trace_sample.csv` |
+
+    ## Direct Links
+
+    - `test_set_samples/sample_survival_cases.json`
+    - `survival_frame_samples/survival_frame_sample.csv`
+    - `survival_frame_samples/survival_frame_column_dictionary.csv`
+    - `audit_samples/dataset_audit_sample.csv`
+    - `audit_samples/feature_leakage_audit_sample.csv`
+    - `audit_samples/split_audit_sample.csv`
+    - `result_samples/model_result_sample.csv`
+    - `hpo_samples/hpo_selected_config_sample.json`
+    - `hpo_samples/hpo_candidate_trace_sample.csv`
+
+    ## Notes
+
+    The structured folders are authoritative. If `quick_view/` exists, it only provides convenience copies. If `processed_mini_samples/` exists, it only provides small processed or anonymized mini samples.
+    """
+).strip() + "\n"
+
+DATA_FORMAT_SPEC = dedent(
+    """
+    # Data Format Specification
+
+    This document provides detailed specifications for all sample data formats used in the OCEAN-MO-CDSF predictive-maintenance survival-analysis sample repository.
+
+    ## Table of Contents
+
+    1. Test Set Format
+    2. Survival Frame Format
+    3. Audit Table Formats
+    4. Result Table Format
+    5. HPO Format
+    6. Metadata Fields
+    7. Data Types
+    8. Validation Rules
+    9. Encoding and Special Characters
+    10. File Naming Conventions
+    11. Version Information
+
+    ## 1. Test Set Format
+    - Format: JSON
+    - Encoding: UTF-8
+    - Structure: array of objects
+
+    ### Object Schema
+    ```json
+    {
+      "case_id": "string (required)",
+      "dataset": "enum/string (required)",
+      "unit_id": "string (required)",
+      "anchor_time": "string (required)",
+      "sequence_length": "integer (required)",
+      "horizon_grid": ["array of integers (required)"],
+      "duration": "number (required)",
+      "event": "integer enum 0/1 (required)",
+      "event_type": "string (required)",
+      "censoring_type": "enum/string (required)",
+      "feature_summary": "string (required)",
+      "expected_behavior": "string (required)",
+      "notes": "string (optional)"
+    }
+    ```
+
+    ### Field Descriptions
+    | Field | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | case_id | string | Yes | Unique sample case identifier |
+    | dataset | string/enum | Yes | Dataset family such as `azure`, `scania`, `cmapss_fd001`, or `cmapss_fd004` |
+    | unit_id | string | Yes | Anonymized unit identifier |
+    | anchor_time | string | Yes | Prediction anchor time in ISO 8601 format |
+    | sequence_length | integer | Yes | Number of historical timesteps |
+    | horizon_grid | array[number] | Yes | Prediction horizons |
+    | duration | number | Yes | Observed time-to-event or time-to-censoring |
+    | event | integer | Yes | `1` means observed failure and `0` means right-censored |
+    | event_type | string | Yes | Human-readable event category |
+    | censoring_type | string | Yes | `none`, `right_censored`, or `administrative_censoring_*` |
+    | feature_summary | string | Yes | Compact feature summary for illustration |
+    | expected_behavior | string | Yes | Expected validator or model interpretation |
+    | notes | string | No | Additional explanation |
+
+    ## 2. Survival Frame Format
+    - Format: CSV
+    - Encoding: UTF-8
+    - Header: first row contains column names
+    - Delimiter: comma
+
+    ### Column Schema
+    | Column | Type | Required | Role | Description |
+    | --- | --- | --- | --- | --- |
+    | sample_id | string | Yes | metadata | Unique sample or anchor identifier |
+    | dataset | string | Yes | metadata | Dataset family |
+    | unit_id | string | Yes | metadata | Anonymized unit identifier |
+    | anchor_time | string | Yes | metadata | Prediction anchor |
+    | duration | number | Yes | label | Observed time-to-event or censoring |
+    | event | integer | Yes | label | `1` observed event, `0` censored |
+    | event_type | string | Yes | label | Event code or label |
+    | censoring_rate | number | Yes | metadata | Administrative censoring setting or scenario |
+    | horizon_1 | number | Yes | metadata | First prediction horizon |
+    | horizon_2 | number | Yes | metadata | Second prediction horizon |
+    | horizon_3 | number | Yes | metadata | Third prediction horizon |
+    | horizon_4 | number | Yes | metadata | Fourth prediction horizon |
+    | static_feature_1 | number | Yes | feature | Example static covariate |
+    | static_feature_2 | number | Yes | feature | Example static covariate |
+    | seq_feature_mean_1 | number | Yes | feature | Sequence summary mean |
+    | seq_feature_std_1 | number | Yes | feature | Sequence summary standard deviation |
+    | seq_feature_last_1 | number | Yes | feature | Last observed sequence value |
+    | missing_rate | number | Yes | metadata/quality | Fraction missing; metadata by default unless explicitly promoted to a feature |
+    | padding_rate | number | Yes | metadata/quality | Fraction padded; metadata by default unless explicitly promoted to a feature |
+
+    ### Important
+    Label and metadata columns are included for dataset construction and evaluation, but they must not be used as model features unless explicitly allowed by a column dictionary. `survival_frame_column_dictionary.csv` specifies `used_as_feature`.
+
+    ## 3. Audit Table Formats
+    ### 3.1 Dataset Audit
+    - Format: CSV
+    - Encoding: UTF-8
+
+    | Column | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | dataset | string | Yes | Dataset family |
+    | censoring_rate | number | Yes | Censoring setting |
+    | samples | integer | Yes | Number of sample anchors |
+    | units | integer | Yes | Number of unique units |
+    | event_rate | number | Yes | Proportion of event=1 samples |
+    | censoring_rate_observed | number | Yes | Proportion of censored samples |
+    | duration_median | number | Yes | Median observed duration |
+    | padding_rate | number | Yes | Mean padding rate |
+    | missing_rate | number | Yes | Mean missing rate |
+    | fallback | boolean | Yes | Whether fallback or synthetic data was used |
+    | status | enum | Yes | `passed` or `failed` |
+
+    ### 3.2 Feature Leakage Audit
+    | Column | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | dataset | string | Yes | Dataset |
+    | censoring_rate | number | Yes | Censoring setting |
+    | seq_feature_count | integer | Yes | Number of sequence feature columns |
+    | static_feature_count | integer | Yes | Number of static feature columns |
+    | bad_seq_features | string | No | Forbidden sequence features |
+    | bad_static_features | string | No | Forbidden static features |
+    | status | enum | Yes | `passed` or `failed` |
+
+    ### 3.3 Split Audit
+    | Column | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | dataset | string | Yes | Dataset |
+    | censoring_rate | number | Yes | Censoring setting |
+    | seed | integer | Yes | Split seed |
+    | train_units | integer | Yes | Number of training units |
+    | calibration_units | integer | Yes | Number of calibration units |
+    | validation_units | integer | Yes | Number of validation units |
+    | test_units | integer | Yes | Number of test units |
+    | overlap_unit_count | integer | Yes | Unit overlap across splits |
+    | status | enum | Yes | `passed` or `failed` |
+
+    ## 4. Result Table Format
+    - Format: CSV
+    - Encoding: UTF-8
+
+    | Column | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | dataset | string | Yes | Dataset family |
+    | censoring_rate | number | Yes | Censoring setting |
+    | seed | integer | Yes | Random or split seed |
+    | model | string | Yes | Model name |
+    | validation_calibrated_monotone_ipcw_ibs | number | Yes | Validation selection metric |
+    | test_calibrated_monotone_ipcw_ibs | number | Yes | Test metric reported after selection |
+    | c_index | number | Yes | Concordance metric |
+    | ece | number | Yes | Expected calibration error |
+    | cost_top10 | number | Yes | Maintenance cost for the top-risk subset |
+    | riw | number | Yes | Relative interval width |
+    | runtime_sec | number | Yes | Runtime in seconds |
+    | selected_by_validation | boolean | Yes | Whether selected by validation criterion |
+
+    Lower IPCW-IBS is better, higher C-index is better, and test metrics must not be used for selection.
+
+    ## 5. HPO Format
+    ### 5.1 Selected Config JSON
+    - Format: JSON
+    - Encoding: UTF-8
+    - Structure: array of objects
+
+    ```json
+    {
+      "dataset": "string (required)",
+      "censoring_rate": "number (required)",
+      "seed": "integer (required)",
+      "model": "string (required)",
+      "search_method": "enum/string (required)",
+      "config_hash": "string (required)",
+      "fidelity_level": "string (required)",
+      "hyperparameters": "object (required)",
+      "validation_metric": "object (required)",
+      "test_metric_reported_only": "object (required)",
+      "selected_by_validation": "boolean (required)"
+    }
+    ```
+
+    Hyperparameter examples include `hidden_dim`, `num_layers`, `dropout`, `learning_rate`, `batch_size`, `epochs`, `kan_grid_size`, and `kan_l2`.
+
+    ### 5.2 Candidate Trace CSV
+    | Column | Type | Required | Description |
+    | --- | --- | --- | --- |
+    | dataset | string | Yes | Dataset family |
+    | censoring_rate | number | Yes | Censoring setting |
+    | seed | integer | Yes | Split seed |
+    | model | string | Yes | Model |
+    | search_method | enum | Yes | `random_search` or `ga_amfpo` |
+    | candidate_id | string | Yes | Candidate identifier |
+    | fidelity_level | enum | Yes | `fidelity_1`, `fidelity_2`, `fidelity_3` |
+    | promoted | boolean | Yes | Whether promoted to the next stage |
+    | validation_calibrated_monotone_ipcw_ibs | number | Yes | Validation score |
+    | runtime_sec | number | Yes | Runtime |
+    | config_hash | string | Yes | Hash of hyperparameters |
+
+    Final evidence should come from `fidelity_3`, and test metrics are report-only for selected full-fidelity configurations.
+
+    ## 6. Metadata Fields
+    - `anchor_time`: time at which prediction is made
+    - `duration`: observed time-to-event or time-to-censoring
+    - `horizon_*`: prediction horizons
+    - `censoring_rate`: administrative censoring setting or scenario label
+    - `unit_id`: anonymized unit identifier used for splitting, not for model input
+
+    ## 7. Data Types
+    - String: UTF-8 encoded identifiers such as `sample_id`, `dataset`, `unit_id`, `model`, and `config_hash`
+    - Number: integer or floating point values for durations, horizons, metrics, and rates
+    - Date/time: if used, ISO 8601 format
+    - Enum: `event`, `search_method`, `fidelity_level`, `status`, `selected_by_validation`
+    - Array: JSON array format for `horizon_grid`
+    - Object: JSON object format for `hyperparameters`, `validation_metric`, and `test_metric_reported_only`
+
+    ## 8. Validation Rules
+    - Test cases: `case_id` must be unique, `duration` must be positive, `event` must be 0 or 1, `horizon_grid` must be non-empty and increasing, and `feature_summary` must be a string.
+    - Survival frame: `sample_id` must be unique, `duration > 0`, `event in {0,1}`, `censoring_rate in [0,1]`, `horizon_1 <= horizon_2 <= horizon_3 <= horizon_4`, and `missing_rate` and `padding_rate` must be in `[0,1]`.
+    - Audit tables: `status` must be `passed` or `failed`, `fallback` must be boolean-like, and `overlap_unit_count` must be `0` for passed split audits.
+    - Result tables: metric columns must be numeric, and `selected_by_validation` must be boolean-like.
+    - HPO: `config_hash`, `selected_by_validation`, `test_metric_reported_only`, and valid `fidelity_level` values must exist.
+    - Feature leakage: forbidden tokens must not appear in feature column names, including `failure_time`, `rul`, and `censor_time`.
+    - Label and metadata columns such as `sample_id`, `dataset`, `unit_id`, `anchor_time`, `duration`, `event`, `event_type`, and `censoring_rate` must not be used as predictive features.
+
+    ## 9. Encoding and Special Characters
+    - All text files use UTF-8 encoding.
+    - CSV files use comma delimiters.
+    - JSON files use UTF-8 and pretty indentation.
+    - Entity identifiers use underscores rather than spaces.
+    - No local Windows paths should appear inside sample data files.
+    - No private identifiers should appear.
+
+    ## 10. File Naming Conventions
+    - Test cases: `sample_survival_cases.json`
+    - Test case schema: `sample_survival_cases_schema.json`
+    - Survival frame sample: `survival_frame_sample.csv`
+    - Survival frame schema: `survival_frame_schema.json`
+    - Column dictionary: `survival_frame_column_dictionary.csv`
+    - Dataset audit: `dataset_audit_sample.csv`
+    - Feature leakage audit: `feature_leakage_audit_sample.csv`
+    - Split audit: `split_audit_sample.csv`
+    - Model result sample: `model_result_sample.csv`
+    - HPO selected config: `hpo_selected_config_sample.json`
+    - HPO candidate trace: `hpo_candidate_trace_sample.csv`
+    - Validation report: `VALIDATION_REPORT.md`
+
+    ## 11. Version Information
+    - Current format version: 1.0
+    - Schema changes should increment the version number
+    - These files are illustrative samples, not full benchmark data
+    """
+).strip() + "\n"
+
+TEST_SET_README = dedent(
+    """
+    # Test Set Samples
+
+    ## Purpose
+
+    This folder provides small survival test-case examples for the OCEAN-MO-CDSF format. The cases show observed failures, right-censoring, administrative censoring, padding, and missingness.
+
+    ## Files
+
+    - `sample_survival_cases.json`
+    - `sample_survival_cases_schema.json`
+
+    ## Format Summary
+
+    JSON array of compact case records with a companion JSON schema.
+
+    ## Example JSON Snippet
+
+    ```json
+    {
+      "case_id": "azure_recurrent_obs_01",
+      "dataset": "azure",
+      "unit_id": "AZ-1001",
+      "event": 1,
+      "event_type": "observed_failure"
+    }
+    ```
+
+    ## Python Loading Example
+
+    ```python
+    import json
+
+    with open("data_samples/data/test_set_samples/sample_survival_cases.json", "r", encoding="utf-8") as f:
+        payload = json.load(f)
+    cases = payload["cases"]
+    ```
+
+    ## Notes and Warnings
+
+    - `event=1` means observed failure.
+    - `event=0` means right-censored.
+    - `expected_behavior` explains the intended interpretation of the case.
+    - All values are illustrative, synthetic, and anonymized.
+    """
+).strip() + "\n"
+
+SURVIVAL_FRAME_README = dedent(
+    """
+    # Survival Frame Samples
+
+    ## Purpose
+
+    This folder contains compact survival-frame rows that demonstrate the tabular format used by OCEAN-MO-CDSF.
+
+    ## Files
+
+    - `survival_frame_sample.csv`
+    - `survival_frame_schema.json`
+    - `survival_frame_column_dictionary.csv`
+
+    ## Format Summary
+
+    CSV table with target, metadata, and feature columns plus a column dictionary.
+
+    ## Example Row
+
+    ```csv
+    sample_id,dataset,unit_id,anchor_time,duration,event,event_type,censoring_rate,horizon_1,horizon_2,horizon_3,horizon_4,static_feature_1,static_feature_2,seq_feature_mean_1,seq_feature_std_1,seq_feature_last_1,missing_rate,padding_rate
+    SF_001,azure,unit_0001,2026-05-01T08:00:00Z,96,1,observed_failure,0.0,24,72,168,336,0.45,0.12,0.62,0.08,0.70,0.00,0.00
+    ```
+
+    ## Python Loading Example
+
+    ```python
+    import pandas as pd
+
+    df = pd.read_csv("data_samples/data/survival_frame_samples/survival_frame_sample.csv")
+    print(df.head())
+    ```
+
+    ## Notes and Warnings
+
+    - `duration`, `event`, `event_type`, `unit_id`, and `anchor_time` are labels or metadata and must not be used as predictive features.
+    - The column dictionary defines which columns are intended for features.
+    - `missing_rate` and `padding_rate` are metadata by default unless explicitly promoted.
+    """
+).strip() + "\n"
+
+AUDIT_README = dedent(
+    """
+    # Audit Samples
+
+    ## Purpose
+
+    This folder contains compact examples of dataset auditing, feature leakage review, and unit-level split checking.
+
+    ## Files
+
+    - `dataset_audit_sample.csv`
+    - `feature_leakage_audit_sample.csv`
+    - `split_audit_sample.csv`
+
+    ## Format Summary
+
+    CSV audit tables with pass or fail style statuses and simple boolean-like fields.
+
+    ## Example Rows
+
+    ```csv
+    dataset,censoring_rate,samples,units,event_rate,censoring_rate_observed,duration_median,padding_rate,missing_rate,fallback,status
+    azure,0.0,120,14,0.42,0.08,18.4,0.01,0.02,false,pass
+    ```
+
+    ## Python Loading Example
+
+    ```python
+    import pandas as pd
+
+    dataset_audit = pd.read_csv("data_samples/data/audit_samples/dataset_audit_sample.csv")
+    print(dataset_audit[["dataset", "event_rate", "status"]])
+    ```
+
+    ## Notes and Warnings
+
+    - Dataset audits summarize censoring, duration, missingness, and fallback state.
+    - Feature leakage audits should confirm that forbidden tokens do not appear in feature names.
+    - Split audits should be unit-disjoint with `overlap_unit_count = 0` for passed rows.
+    """
+).strip() + "\n"
+
+RESULT_README = dedent(
+    """
+    # Result Samples
+
+    ## Purpose
+
+    This folder contains small model-result records that demonstrate validation selection and final test reporting.
+
+    ## Files
+
+    - `model_result_sample.csv`
+
+    ## Format Summary
+
+    CSV table with selection metrics, test metrics, ranking metrics, calibration metrics, cost, interval width, and runtime.
+
+    ## Example Row
+
+    ```csv
+    dataset,censoring_rate,seed,model,validation_calibrated_monotone_ipcw_ibs,test_calibrated_monotone_ipcw_ibs,c_index,ece,cost_top10,riw,runtime_sec,selected_by_validation
+    azure,0.0,0,ocean_transformer_kan,0.143,0.150,0.83,0.03,0.09,0.85,15.1,true
+    ```
+
+    ## Python Loading Example
+
+    ```python
+    import pandas as pd
+
+    results = pd.read_csv("data_samples/data/result_samples/model_result_sample.csv")
+    print(results.sort_values("validation_calibrated_monotone_ipcw_ibs").head())
+    ```
+
+    ## Notes and Warnings
+
+    - Validation metrics are used for model selection.
+    - Test metrics are reported only after the selected model or configuration is fixed.
+    - `validation_calibrated_monotone_ipcw_ibs` and `test_calibrated_monotone_ipcw_ibs` are lower-is-better metrics.
+    - `c_index` is a discrimination metric, `ece` is a calibration error, `cost_top10` is a top-risk cost summary, `riw` is an interval-width summary, and `runtime_sec` is wall-clock time.
+    """
+).strip() + "\n"
+
+HPO_README = dedent(
+    """
+    # HPO Samples
+
+    ## Purpose
+
+    This folder contains compact hyperparameter-optimization examples for the OCEAN-MO-CDSF workflow.
+
+    ## Files
+
+    - `hpo_selected_config_sample.json`
+    - `hpo_candidate_trace_sample.csv`
+
+    ## Format Summary
+
+    JSON selected configurations plus a CSV candidate trace showing multi-fidelity promotion behavior.
+
+    ## Example Snippets
+
+    ```json
+    {
+      "dataset": "azure",
+      "model": "ocean_gru_kan",
+      "search_method": "random_search",
+      "selected_by_validation": true
+    }
+    ```
+
+    ```csv
+    dataset,censoring_rate,seed,model,search_method,candidate_id,fidelity_level,promoted,validation_calibrated_monotone_ipcw_ibs,runtime_sec,config_hash
+    azure,0.0,0,ocean_gru_kan,random_search,rs-001,fidelity_1,true,0.218,1.2,ogk-0a31f7c1
+    ```
+
+    ## Python Loading Example
+
+    ```python
+    import csv
+    import json
+
+    with open("data_samples/data/hpo_samples/hpo_selected_config_sample.json", "r", encoding="utf-8") as f:
+        selected = json.load(f)
+
+    with open("data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv", "r", encoding="utf-8", newline="") as f:
+        trace = list(csv.DictReader(f))
+    ```
+
+    ## Notes and Warnings
+
+    - `random_search` and `ga_amfpo` are example search methods.
+    - `fidelity_1` and `fidelity_2` are screening stages, while `fidelity_3` represents the final evidence stage.
+    - `promoted=true` indicates a candidate advanced to a higher-fidelity evaluation.
+    - Test metrics are report-only for selected configurations.
+    """
+).strip() + "\n"
+
 def print_tree(root: Path) -> None:
     def walk(path: Path, prefix: str = "") -> None:
         entries = sorted(path.iterdir(), key=lambda p: (p.is_file(), p.name.lower()))
@@ -1074,6 +1760,7 @@ def main() -> None:
     ensure_text_file(REPO_ROOT / ".gitignore", ROOT_GITIGNORE)
     ensure_text_file(DATA_SAMPLES_ROOT / ".gitignore", DATA_SAMPLES_GITIGNORE)
     ensure_text_file(DATA_SAMPLES_ROOT / "README.md", DATA_SAMPLES_README)
+    ensure_text_file(DATA_SAMPLES_ROOT / "data" / "README.md", DATA_DIR_README)
     ensure_text_file(DATA_SAMPLES_ROOT / "data_format_specification.md", DATA_FORMAT_SPEC)
 
     ensure_text_file(DATA_SAMPLES_ROOT / "data" / "test_set_samples" / "README.md", TEST_SET_README)

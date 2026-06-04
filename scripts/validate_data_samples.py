@@ -82,6 +82,7 @@ def check_required_files() -> Check:
         REPO_ROOT / ".gitignore",
         DATA_SAMPLES_ROOT / "README.md",
         DATA_SAMPLES_ROOT / ".gitignore",
+        DATA_SAMPLES_ROOT / "data" / "README.md",
         DATA_SAMPLES_ROOT / "data_format_specification.md",
         DATA_SAMPLES_ROOT / "data" / "test_set_samples" / "README.md",
         DATA_SAMPLES_ROOT / "data" / "test_set_samples" / "sample_survival_cases.json",
@@ -314,6 +315,138 @@ def check_audit_samples() -> list[Check]:
     return checks
 
 
+def check_documentation_files() -> list[Check]:
+    checks: list[Check] = []
+
+    spec_path = DATA_SAMPLES_ROOT / "data_format_specification.md"
+    data_readme = DATA_SAMPLES_ROOT / "data" / "README.md"
+    root_readme = REPO_ROOT / "README.md"
+    data_samples_readme = DATA_SAMPLES_ROOT / "README.md"
+
+    for path, label in [
+        (root_readme, "Root README"),
+        (data_samples_readme, "data_samples README"),
+        (data_readme, "data directory README"),
+        (spec_path, "data format specification"),
+    ]:
+        checks.append(Check(f"Documentation file exists: {label}", path.exists(), f"{path.relative_to(REPO_ROOT)} exists." if path.exists() else f"{path.relative_to(REPO_ROOT)} is missing."))
+
+    if spec_path.exists():
+        text = read_text(spec_path)
+        required_headings = [
+            "# Data Format Specification",
+            "## Table of Contents",
+            "## 1. Test Set Format",
+            "## 2. Survival Frame Format",
+            "## 3. Audit Table Formats",
+            "## 4. Result Table Format",
+            "## 5. HPO Format",
+            "## 6. Metadata Fields",
+            "## 7. Data Types",
+            "## 8. Validation Rules",
+            "## 9. Encoding and Special Characters",
+            "## 10. File Naming Conventions",
+            "## 11. Version Information",
+        ]
+        missing = [heading for heading in required_headings if heading not in text]
+        checks.append(Check("Specification headings", not missing, "All required major headings are present." if not missing else "Missing headings: " + ", ".join(missing)))
+
+    if root_readme.exists():
+        text = read_text(root_readme)
+        required_sections = [
+            "# Predictive Maintenance Sample Data",
+            "## Overview",
+            "## What This Repository Contains",
+            "## What This Repository Does Not Contain",
+            "## Directory Structure",
+            "## Quick Start",
+            "## Main Data Format",
+            "## Validation",
+            "## Citation / Paper Placeholder",
+            "## License / Data Note",
+        ]
+        missing = [section for section in required_sections if section not in text]
+        checks.append(Check("Root README sections", not missing, "All required root README sections are present." if not missing else "Missing sections: " + ", ".join(missing)))
+
+    if data_samples_readme.exists():
+        text = read_text(data_samples_readme)
+        required_sections = [
+            "# OCEAN-MO-CDSF Dataset Samples",
+            "## Overview",
+            "## Purpose",
+            "## Dataset Components",
+            "## Directory Tree",
+            "## Usage Examples",
+            "## Event and Censoring Interpretation",
+            "## Feature Leakage Warning",
+            "## Validation and Test Separation",
+            "## Data Availability Note",
+        ]
+        missing = [section for section in required_sections if section not in text]
+        checks.append(Check("data_samples README sections", not missing, "All required data_samples README sections are present." if not missing else "Missing sections: " + ", ".join(missing)))
+
+    if data_readme.exists():
+        text = read_text(data_readme)
+        required_sections = [
+            "# Data Directory Index",
+            "## Overview",
+            "## Folder Index",
+            "## Direct Links",
+            "## Notes",
+        ]
+        missing = [section for section in required_sections if section not in text]
+        checks.append(Check("data/README sections", not missing, "All required data directory index sections are present." if not missing else "Missing sections: " + ", ".join(missing)))
+
+    return checks
+
+
+def check_forbidden_folder_names() -> Check:
+    forbidden = {"ontology_samples", "kg_samples", "survival_graph_samples"}
+    bad = []
+    for path in DATA_SAMPLES_ROOT.rglob("*"):
+        if path.is_dir() and path.name.lower() in forbidden:
+            bad.append(str(path.relative_to(DATA_SAMPLES_ROOT)))
+    return Check("Forbidden folder names", not bad, "No forbidden folder names found." if not bad else "Forbidden folders: " + ", ".join(bad))
+
+
+def check_no_raw_benchmark_claims() -> list[Check]:
+    checks: list[Check] = []
+    forbidden_phrases = [
+        "contains the full benchmark dataset",
+        "includes the full benchmark dataset",
+        "contains the full raw benchmark dataset",
+        "includes the full raw benchmark dataset",
+        "contains full benchmark data",
+        "includes full benchmark data",
+        "contains raw benchmark data",
+        "includes raw benchmark data",
+    ]
+    scanned_suffixes = {".md", ".txt", ".json", ".csv", ".yaml", ".yml", ".gitignore"}
+    matches = []
+    scan_roots = [REPO_ROOT / "README.md", DATA_SAMPLES_ROOT]
+    paths_to_scan: list[Path] = []
+    for root in scan_roots:
+        if root.is_file():
+            paths_to_scan.append(root)
+        elif root.is_dir():
+            paths_to_scan.extend([path for path in root.rglob("*") if path.is_file()])
+
+    for path in paths_to_scan:
+        if path.resolve() == REPORT_PATH.resolve():
+            continue
+        if path.suffix.lower() in scanned_suffixes:
+            try:
+                text = read_text(path)
+            except Exception:
+                continue
+            lower = text.lower()
+            for phrase in forbidden_phrases:
+                if phrase in lower:
+                    matches.append(f"{path.relative_to(REPO_ROOT)} -> {phrase}")
+    checks.append(Check("Raw benchmark claim scan", not matches, "No forbidden raw/full benchmark inclusion claims found." if not matches else "Matches: " + "; ".join(matches)))
+    return checks
+
+
 def write_report(checks: list[Check]) -> None:
     lines = [
         "# Data Samples Validation Report",
@@ -331,6 +464,7 @@ def write_report(checks: list[Check]) -> None:
 def main() -> int:
     checks: list[Check] = []
     checks.append(check_required_files())
+    checks.extend(check_documentation_files())
     checks.extend(check_json_loads())
     checks.extend(check_csv_loads())
     checks.extend(check_survival_frame())
@@ -338,6 +472,8 @@ def main() -> int:
     checks.extend(check_hpo_json())
     checks.extend(check_result_sample())
     checks.extend(check_audit_samples())
+    checks.append(check_forbidden_folder_names())
+    checks.extend(check_no_raw_benchmark_claims())
 
     for check in checks:
         print(f"{'PASS' if check.passed else 'FAIL'}: {check.name} - {check.details}")

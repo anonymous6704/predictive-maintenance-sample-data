@@ -1,33 +1,66 @@
 # Predictive Maintenance Sample Data
 
-This repository provides small illustrative data samples for the OCEAN-MO-CDSF predictive-maintenance survival-analysis framework.
+## Overview
 
-It is not the full benchmark dataset.
-It contains no raw industrial data.
-It contains no model weights.
-It contains no private or sensitive information.
-All values are illustrative, anonymized, and synthetic for format demonstration.
+This repository provides small illustrative data samples for the OCEAN-MO-CDSF framework, an evidence-driven multi-objective deep survival framework for censored predictive maintenance.
 
-Main documentation:
+## What This Repository Contains
 
-- [data_samples/README.md](data_samples/README.md)
+- Survival test cases
+- Survival frame samples
+- Audit table samples
+- Model result samples
+- HPO trace samples
+- Validation scripts
 
-Quick usage:
+## What This Repository Does Not Contain
 
-```powershell
+- It does not contain the full benchmark dataset.
+- It does not redistribute raw Azure, Scania, or C-MAPSS data.
+- It does not contain model checkpoints, trained weights, raw industrial logs, or private data.
+- It does not contain ontology, KG, or graph data.
+
+## Directory Structure
+
+```text
+predictive-maintenance-sample-data/
+├── README.md
+├── .gitignore
+├── scripts/
+│   ├── create_data_samples.py
+│   └── validate_data_samples.py
+└── data_samples/
+    ├── README.md
+    ├── data_format_specification.md
+    ├── VALIDATION_REPORT.md
+    └── data/
+        ├── README.md
+        ├── test_set_samples/
+        ├── survival_frame_samples/
+        ├── audit_samples/
+        ├── result_samples/
+        └── hpo_samples/
+```
+
+## Quick Start
+
+```bash
 python scripts/create_data_samples.py
 python scripts/validate_data_samples.py
 ```
 
-Directory overview:
+## Main Data Format
 
-- `data_samples/`: illustrative sample-data bundle for OCEAN-MO-CDSF
-- `scripts/`: generator and validation utilities
+The central format is a multi-horizon survival frame with metadata columns, event/censoring labels, and feature-summary columns.
 
-Notes:
+## Validation
 
-- `event=1` means an observed failure.
-- `event=0` means right-censored.
-- Test metrics are reported only after validation selection.
-- C-MAPSS administrative censoring is a stress-test setting if used.
-- SurvSHAP-style explanations, if used elsewhere in the paper, are model-behavior explanations, not causal claims.
+The validator checks required files, JSON and CSV readability, event and duration validity, censoring-rate range, horizon monotonicity, feature leakage column names, and HPO trace consistency.
+
+## Citation / Paper Placeholder
+
+If you use this sample repository, please cite the associated OCEAN-MO-CDSF paper once available.
+
+## License / Data Note
+
+All provided values are illustrative and anonymized/synthetic for format demonstration.

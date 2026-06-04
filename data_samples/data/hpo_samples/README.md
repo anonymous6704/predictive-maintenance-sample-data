@@ -4,22 +4,32 @@
 
 This folder contains compact hyperparameter-optimization examples for the OCEAN-MO-CDSF workflow.
 
-## File Descriptions
+## Files
 
-- `hpo_selected_config_sample.json`: selected configurations for representative models
-- `hpo_candidate_trace_sample.csv`: candidate trace showing multi-fidelity promotion behavior
+- `hpo_selected_config_sample.json`
+- `hpo_candidate_trace_sample.csv`
 
-## HPO Candidate Notes
+## Format Summary
 
-- `random_search` and `ga_amfpo` are shown as example search methods.
-- `fidelity_1`, `fidelity_2`, and `fidelity_3` show a multi-fidelity progression.
-- `promoted=true` indicates that a candidate advanced to a higher-fidelity evaluation.
+JSON selected configurations plus a CSV candidate trace showing multi-fidelity promotion behavior.
 
-## Validation vs Test Separation
+## Example Snippets
 
-Test metrics are reported only after the selected configuration is fixed by validation.
+```json
+{
+  "dataset": "azure",
+  "model": "ocean_gru_kan",
+  "search_method": "random_search",
+  "selected_by_validation": true
+}
+```
 
-## Python Load Example
+```csv
+dataset,censoring_rate,seed,model,search_method,candidate_id,fidelity_level,promoted,validation_calibrated_monotone_ipcw_ibs,runtime_sec,config_hash
+azure,0.0,0,ocean_gru_kan,random_search,rs-001,fidelity_1,true,0.218,1.2,ogk-0a31f7c1
+```
+
+## Python Loading Example
 
 ```python
 import csv
@@ -31,3 +41,10 @@ with open("data_samples/data/hpo_samples/hpo_selected_config_sample.json", "r", 
 with open("data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv", "r", encoding="utf-8", newline="") as f:
     trace = list(csv.DictReader(f))
 ```
+
+## Notes and Warnings
+
+- `random_search` and `ga_amfpo` are example search methods.
+- `fidelity_1` and `fidelity_2` are screening stages, while `fidelity_3` represents the final evidence stage.
+- `promoted=true` indicates a candidate advanced to a higher-fidelity evaluation.
+- Test metrics are report-only for selected configurations.

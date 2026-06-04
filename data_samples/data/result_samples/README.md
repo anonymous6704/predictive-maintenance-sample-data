@@ -2,32 +2,35 @@
 
 ## Purpose
 
-This folder contains small model-result records that demonstrate the separation between validation selection and final test reporting.
+This folder contains small model-result records that demonstrate validation selection and final test reporting.
 
-## File Descriptions
+## Files
 
-- `model_result_sample.csv`: compact per-model result table
+- `model_result_sample.csv`
 
-## Metric Notes
+## Format Summary
 
-- `validation_calibrated_monotone_ipcw_ibs`: validation-time selection metric
-- `test_calibrated_monotone_ipcw_ibs`: final reporting metric, shown only after validation selection
-- `c_index`: concordance-style ranking metric
-- `ece`: calibration error
-- `cost_top10`: cost-based top-10 measure
-- `riw`: relative information weight or related efficiency score used in the paper workflow
-- `runtime_sec`: wall-clock runtime in seconds
-- `selected_by_validation`: indicates which row won validation-based selection
+CSV table with selection metrics, test metrics, ranking metrics, calibration metrics, cost, interval width, and runtime.
 
-## Python Load Example
+## Example Row
 
-```python
-import csv
-
-with open("data_samples/data/result_samples/model_result_sample.csv", "r", encoding="utf-8", newline="") as f:
-    rows = list(csv.DictReader(f))
+```csv
+dataset,censoring_rate,seed,model,validation_calibrated_monotone_ipcw_ibs,test_calibrated_monotone_ipcw_ibs,c_index,ece,cost_top10,riw,runtime_sec,selected_by_validation
+azure,0.0,0,ocean_transformer_kan,0.143,0.150,0.83,0.03,0.09,0.85,15.1,true
 ```
 
-## Validation vs Test Separation
+## Python Loading Example
 
-Validation metrics drive model selection. Test metrics are reported only after the selected configuration is fixed.
+```python
+import pandas as pd
+
+results = pd.read_csv("data_samples/data/result_samples/model_result_sample.csv")
+print(results.sort_values("validation_calibrated_monotone_ipcw_ibs").head())
+```
+
+## Notes and Warnings
+
+- Validation metrics are used for model selection.
+- Test metrics are reported only after the selected model or configuration is fixed.
+- `validation_calibrated_monotone_ipcw_ibs` and `test_calibrated_monotone_ipcw_ibs` are lower-is-better metrics.
+- `c_index` is a discrimination metric, `ece` is a calibration error, `cost_top10` is a top-risk cost summary, `riw` is an interval-width summary, and `runtime_sec` is wall-clock time.

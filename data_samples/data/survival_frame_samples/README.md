@@ -4,28 +4,34 @@
 
 This folder contains compact survival-frame rows that demonstrate the tabular format used by OCEAN-MO-CDSF.
 
-## File Descriptions
+## Files
 
-- `survival_frame_sample.csv`: illustrative survival-frame records
-- `survival_frame_schema.json`: schema describing the CSV columns
-- `survival_frame_column_dictionary.csv`: column-level roles and usage flags
+- `survival_frame_sample.csv`
+- `survival_frame_schema.json`
+- `survival_frame_column_dictionary.csv`
 
-## Column-Role Explanation
+## Format Summary
 
-- Identifier and metadata fields describe the unit, anchor time, censoring setup, or sample identity.
-- Outcome fields describe the survival target and must not be used as predictive features.
-- Feature fields are the only columns intended for model inputs.
-- `missing_rate` and `padding_rate` are kept as metadata by default unless a specific experiment intentionally promotes them to features.
+CSV table with target, metadata, and feature columns plus a column dictionary.
 
-## Python Load Example
+## Example Row
 
-```python
-import csv
-
-with open("data_samples/data/survival_frame_samples/survival_frame_sample.csv", "r", encoding="utf-8", newline="") as f:
-    rows = list(csv.DictReader(f))
+```csv
+sample_id,dataset,unit_id,anchor_time,duration,event,event_type,censoring_rate,horizon_1,horizon_2,horizon_3,horizon_4,static_feature_1,static_feature_2,seq_feature_mean_1,seq_feature_std_1,seq_feature_last_1,missing_rate,padding_rate
+SF_001,azure,unit_0001,2026-05-01T08:00:00Z,96,1,observed_failure,0.0,24,72,168,336,0.45,0.12,0.62,0.08,0.70,0.00,0.00
 ```
 
-## Warning
+## Python Loading Example
 
-Outcome and metadata columns must not be used as predictive features.
+```python
+import pandas as pd
+
+df = pd.read_csv("data_samples/data/survival_frame_samples/survival_frame_sample.csv")
+print(df.head())
+```
+
+## Notes and Warnings
+
+- `duration`, `event`, `event_type`, `unit_id`, and `anchor_time` are labels or metadata and must not be used as predictive features.
+- The column dictionary defines which columns are intended for features.
+- `missing_rate` and `padding_rate` are metadata by default unless explicitly promoted.

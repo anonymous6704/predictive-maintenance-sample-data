@@ -2,14 +2,18 @@
 
 ## Purpose
 
-This folder provides small survival test-case examples for the OCEAN-MO-CDSF format. The cases show observed failures, right-censoring, administrative censoring, short padded sequences, and missing sensor values.
+This folder provides small survival test-case examples for the OCEAN-MO-CDSF format. The cases show observed failures, right-censoring, administrative censoring, padding, and missingness.
 
-## File Descriptions
+## Files
 
-- `sample_survival_cases.json`: illustrative case records
-- `sample_survival_cases_schema.json`: JSON schema for the case file
+- `sample_survival_cases.json`
+- `sample_survival_cases_schema.json`
 
-## JSON Snippet
+## Format Summary
+
+JSON array of compact case records with a companion JSON schema.
+
+## Example JSON Snippet
 
 ```json
 {
@@ -21,23 +25,19 @@ This folder provides small survival test-case examples for the OCEAN-MO-CDSF for
 }
 ```
 
-## Python Load Example
+## Python Loading Example
 
 ```python
 import json
 
 with open("data_samples/data/test_set_samples/sample_survival_cases.json", "r", encoding="utf-8") as f:
     payload = json.load(f)
-
 cases = payload["cases"]
 ```
 
-## Notes on Event and Censoring Interpretation
+## Notes and Warnings
 
 - `event=1` means observed failure.
 - `event=0` means right-censored.
-- Administrative censoring is a simulated stress-test setting, especially for C-MAPSS-derived examples.
-
-## Anonymization Note
-
-All values in this folder are illustrative, synthetic, and anonymized.
+- `expected_behavior` explains the intended interpretation of the case.
+- All values are illustrative, synthetic, and anonymized.

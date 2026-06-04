@@ -19,24 +19,29 @@ This document provides detailed specifications for all sample data formats used 
 ## 1. Test Set Format
 - Format: JSON
 - Encoding: UTF-8
-- Structure: array of objects
+- Structure: JSON object with a metadata field `generated_for` and a `cases` array.
 
 ### Object Schema
 ```json
 {
-  "case_id": "string (required)",
-  "dataset": "enum/string (required)",
-  "unit_id": "string (required)",
-  "anchor_time": "string (required)",
-  "sequence_length": "integer (required)",
-  "horizon_grid": ["array of integers (required)"],
-  "duration": "number (required)",
-  "event": "integer enum 0/1 (required)",
-  "event_type": "string (required)",
-  "censoring_type": "enum/string (required)",
-  "feature_summary": "string (required)",
-  "expected_behavior": "string (required)",
-  "notes": "string (optional)"
+  "generated_for": "string",
+  "cases": [
+    {
+      "case_id": "...",
+      "dataset": "...",
+      "unit_id": "...",
+      "anchor_time": "...",
+      "sequence_length": 0,
+      "horizon_grid": [1, 2, 3],
+      "duration": 0,
+      "event": 0,
+      "event_type": "...",
+      "censoring_type": "...",
+      "feature_summary": "...",
+      "expected_behavior": "...",
+      "notes": "..."
+    }
+  ]
 }
 ```
 

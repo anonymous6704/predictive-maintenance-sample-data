@@ -130,6 +130,30 @@ def check_json_loads() -> list[Check]:
     return checks
 
 
+def check_test_set_json() -> Check:
+    path = DATA_SAMPLES_ROOT / "data" / "test_set_samples" / "sample_survival_cases.json"
+    payload = load_json(path)
+
+    if not isinstance(payload, dict):
+        return Check("Test set JSON structure", False, "sample_survival_cases.json must be a JSON object.")
+
+    issues = []
+    if "generated_for" not in payload:
+        issues.append("missing generated_for")
+    if "cases" not in payload:
+        issues.append("missing cases")
+
+    cases = payload.get("cases")
+    if not isinstance(cases, list):
+        issues.append("cases is not a list")
+    elif len(cases) < 8:
+        issues.append(f"cases has fewer than 8 entries ({len(cases)})")
+
+    if issues:
+        return Check("Test set JSON structure", False, "; ".join(issues))
+    return Check("Test set JSON structure", True, "generated_for exists and cases contains at least 8 entries.")
+
+
 def check_csv_loads() -> list[Check]:
     checks = []
     for rel in [
@@ -607,6 +631,7 @@ def main() -> int:
     checks.append(check_required_files())
     checks.extend(check_documentation_files())
     checks.extend(check_json_loads())
+    checks.append(check_test_set_json())
     checks.extend(check_csv_loads())
     checks.extend(check_survival_frame())
     checks.extend(check_column_dictionary())

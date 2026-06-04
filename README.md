@@ -69,4 +69,4 @@ If you use this sample repository, please cite the associated OCEAN-MO-CDSF pape
 
 ## License / Data Note
 
-All provided values are illustrative and anonymized or synthetic for format demonstration.
+The repository contains two types of files: illustrative synthetic examples for schema demonstration, and small anonymized processed mini samples extracted from the OCEAN-MO-CDSF processed survival-frame files. It does not redistribute full raw datasets or full benchmark frames.

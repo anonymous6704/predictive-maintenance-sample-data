@@ -1,0 +1,20 @@
+column_name,role,dtype,allowed_values,description,used_as_feature
+sample_id,identifier,string,unique sample identifier,Synthetic sample identifier.,false
+dataset,metadata,string,azure|scania|cmapss_fd001|cmapss_fd004,Dataset family label.,false
+unit_id,identifier,string,unit identifier,Unit or machine identifier.,false
+anchor_time,metadata,string,ISO 8601 timestamp,Anchor timestamp for the observation window.,false
+duration,target,number,> 0,Observed or censored time-to-event duration.,false
+event,target,integer,0|1,"Event indicator, where 1 means observed failure and 0 means right-censored.",false
+event_type,metadata,string,observed_failure|right_censored,Human-readable event category; do not use as a predictive feature.,false
+censoring_rate,metadata,number,0..1,Scenario-level censoring rate for the sample row.,false
+horizon_1,metadata,integer,positive integer,First prediction horizon for the sample.,false
+horizon_2,metadata,integer,positive integer,Second prediction horizon for the sample.,false
+horizon_3,metadata,integer,positive integer,Third prediction horizon for the sample.,false
+horizon_4,metadata,integer,positive integer,Fourth prediction horizon for the sample.,false
+static_feature_1,feature,number,synthetic numeric feature,Illustrative static feature used in model inputs.,true
+static_feature_2,feature,number,synthetic numeric feature,Illustrative static feature used in model inputs.,true
+seq_feature_mean_1,feature,number,synthetic numeric feature,Illustrative sequential summary feature used in model inputs.,true
+seq_feature_std_1,feature,number,synthetic numeric feature,Illustrative sequential variability feature used in model inputs.,true
+seq_feature_last_1,feature,number,synthetic numeric feature,Illustrative last-observation sequential feature used in model inputs.,true
+missing_rate,metadata,number,0..1,Observed missingness proportion; metadata by default unless explicitly modeled.,false
+padding_rate,metadata,number,0..1,Padding proportion for sequence alignment; metadata by default unless explicitly modeled.,false

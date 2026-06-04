@@ -1,0 +1,88 @@
+{
+  "selected_configs": [
+    {
+      "dataset": "azure",
+      "censoring_rate": 0.0,
+      "seed": 0,
+      "model": "ocean_gru_kan",
+      "search_method": "random_search",
+      "config_hash": "ogk-0a31f7c1",
+      "fidelity_level": "fidelity_3",
+      "hyperparameters": {
+        "hidden_dim": 48,
+        "num_layers": 2,
+        "dropout": 0.15,
+        "learning_rate": 0.0007,
+        "batch_size": 128,
+        "epochs": 24,
+        "kan_grid_size": 8,
+        "kan_l2": 0.0001
+      },
+      "validation_metric": {
+        "name": "validation_calibrated_monotone_ipcw_ibs",
+        "value": 0.154
+      },
+      "test_metric_reported_only": {
+        "name": "test_calibrated_monotone_ipcw_ibs",
+        "value": 0.161
+      },
+      "selected_by_validation": true
+    },
+    {
+      "dataset": "cmapss_fd004",
+      "censoring_rate": 0.3,
+      "seed": 0,
+      "model": "ocean_mamba_kan",
+      "search_method": "ga_amfpo",
+      "config_hash": "omk-9c44d2ab",
+      "fidelity_level": "fidelity_3",
+      "hyperparameters": {
+        "hidden_dim": 64,
+        "num_layers": 3,
+        "dropout": 0.18,
+        "learning_rate": 0.0005,
+        "batch_size": 256,
+        "epochs": 24,
+        "kan_grid_size": 10,
+        "kan_l2": 0.0002
+      },
+      "validation_metric": {
+        "name": "validation_calibrated_monotone_ipcw_ibs",
+        "value": 0.179
+      },
+      "test_metric_reported_only": {
+        "name": "test_calibrated_monotone_ipcw_ibs",
+        "value": 0.186
+      },
+      "selected_by_validation": true
+    },
+    {
+      "dataset": "scania",
+      "censoring_rate": 0.0,
+      "seed": 0,
+      "model": "ocean_transformer_kan",
+      "search_method": "ga_amfpo",
+      "config_hash": "otk-3e77b5af",
+      "fidelity_level": "fidelity_3",
+      "hyperparameters": {
+        "hidden_dim": 56,
+        "num_layers": 2,
+        "dropout": 0.12,
+        "learning_rate": 0.0006,
+        "batch_size": 128,
+        "epochs": 24,
+        "kan_grid_size": 12,
+        "kan_l2": 0.00015
+      },
+      "validation_metric": {
+        "name": "validation_calibrated_monotone_ipcw_ibs",
+        "value": 0.166
+      },
+      "test_metric_reported_only": {
+        "name": "test_calibrated_monotone_ipcw_ibs",
+        "value": 0.173
+      },
+      "selected_by_validation": true
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+dataset,censoring_rate,seq_feature_count,static_feature_count,bad_seq_features,bad_static_features,status
+azure,0.0,3,2,none,none,pass
+scania,0.0,3,2,none,none,pass
+cmapss_fd001,0.0,3,2,none,none,pass
+cmapss_fd001,0.3,3,2,none,none,pass
+cmapss_fd004,0.0,3,2,none,none,pass
+cmapss_fd004,0.3,3,2,none,none,pass

@@ -1,0 +1,11 @@
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+*.zip
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.joblib

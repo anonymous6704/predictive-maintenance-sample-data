@@ -1,0 +1,38 @@
+# Data Samples Validation Report
+
+- Pandas available: True
+- Overall status: PASS
+
+- PASS: Required file existence - All required files are present.
+- PASS: JSON load: data_samples/data/test_set_samples/sample_survival_cases.json - Loaded successfully.
+- PASS: JSON load: data_samples/data/test_set_samples/sample_survival_cases_schema.json - Loaded successfully.
+- PASS: JSON load: data_samples/data/survival_frame_samples/survival_frame_schema.json - Loaded successfully.
+- PASS: JSON load: data_samples/data/hpo_samples/hpo_selected_config_sample.json - Loaded successfully.
+- PASS: CSV load: data_samples/data/survival_frame_samples/survival_frame_sample.csv - Loaded 20 rows successfully.
+- PASS: CSV load: data_samples/data/survival_frame_samples/survival_frame_column_dictionary.csv - Loaded 19 rows successfully.
+- PASS: CSV load: data_samples/data/audit_samples/dataset_audit_sample.csv - Loaded 6 rows successfully.
+- PASS: CSV load: data_samples/data/audit_samples/feature_leakage_audit_sample.csv - Loaded 6 rows successfully.
+- PASS: CSV load: data_samples/data/audit_samples/split_audit_sample.csv - Loaded 6 rows successfully.
+- PASS: CSV load: data_samples/data/result_samples/model_result_sample.csv - Loaded 18 rows successfully.
+- PASS: CSV load: data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv - Loaded 12 rows successfully.
+- PASS: Survival frame datasets - Found datasets: ['azure', 'cmapss_fd001', 'cmapss_fd004', 'scania']
+- PASS: Survival frame row count - Row count = 20
+- PASS: Survival frame event coverage - event values 0 and 1 are both present.
+- PASS: Survival frame censoring coverage - censoring_rate values 0.0 and 0.3 are both present.
+- PASS: Survival frame value ranges - All rows satisfy duration/event/censoring/horizon/missing/padding constraints.
+- PASS: Column dictionary completeness - All expected columns are present.
+- PASS: Column dictionary metadata flags - All metadata/outcome columns are marked false.
+- PASS: Column dictionary feature flags - All model feature columns are marked true.
+- PASS: Column dictionary missing/padding flags - missing_rate and padding_rate remain metadata by default.
+- PASS: Feature leakage tokens - No feature column names contain forbidden tokens.
+- PASS: HPO JSON selected config count - Selected config count = 3
+- PASS: HPO JSON model coverage - Models present: ['ocean_gru_kan', 'ocean_mamba_kan', 'ocean_transformer_kan']
+- PASS: HPO JSON required fields - All required fields are present and boolean-like where needed.
+- PASS: Result sample boolean flag - selected_by_validation is boolean-like in every row.
+- PASS: Result sample numeric metrics - Metric columns are numeric in every row.
+- PASS: Result sample selection flag - Rows marked selected_by_validation=true: 2
+- PASS: Dataset audit status values - All dataset audit statuses are pass/passed.
+- PASS: Dataset audit fallback flags - All fallback values are boolean-like.
+- PASS: Feature leakage audit status - All leakage audit statuses are pass/passed.
+- PASS: Split audit status - All split audit statuses are pass/passed.
+- PASS: Split audit overlap - All overlap_unit_count values are 0.

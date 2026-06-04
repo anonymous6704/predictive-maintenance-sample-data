@@ -1,0 +1,165 @@
+{
+  "generated_for": "OCEAN-MO-CDSF sample-data documentation",
+  "cases": [
+    {
+      "case_id": "azure_recurrent_obs_01",
+      "dataset": "azure",
+      "unit_id": "AZ-1001",
+      "anchor_time": "2026-05-01T08:00:00Z",
+      "sequence_length": 72,
+      "horizon_grid": [
+        6,
+        12,
+        24,
+        48
+      ],
+      "duration": 18.0,
+      "event": 1,
+      "event_type": "observed_failure",
+      "censoring_type": "none",
+      "feature_summary": "two static signals and a mild degradation trend in the sequence",
+      "expected_behavior": "Near-term failure risk should be elevated and the observed event should occur before the longest horizon.",
+      "notes": "Synthetic Azure-like recurrent failure episode for format demonstration only."
+    },
+    {
+      "case_id": "azure_final_censored_02",
+      "dataset": "azure",
+      "unit_id": "AZ-1002",
+      "anchor_time": "2026-05-03T10:30:00Z",
+      "sequence_length": 96,
+      "horizon_grid": [
+        6,
+        12,
+        24,
+        48
+      ],
+      "duration": 30.0,
+      "event": 0,
+      "event_type": "right_censored",
+      "censoring_type": "right_censoring",
+      "feature_summary": "stable operating range with no observed failure before study end",
+      "expected_behavior": "Model should treat this as a censored case and avoid interpreting the missing failure as a negative label.",
+      "notes": "Synthetic Azure-like final censored episode."
+    },
+    {
+      "case_id": "cmapss_fd001_run_to_failure_03",
+      "dataset": "cmapss_fd001",
+      "unit_id": "FD001-003",
+      "anchor_time": "2026-04-18T06:00:00Z",
+      "sequence_length": 118,
+      "horizon_grid": [
+        5,
+        10,
+        20,
+        40
+      ],
+      "duration": 21.0,
+      "event": 1,
+      "event_type": "observed_failure",
+      "censoring_type": "none",
+      "feature_summary": "single-regime sensor progression with a clear end-of-life pattern",
+      "expected_behavior": "Run-to-failure trajectory should align with the end of the sequence and a positive event label.",
+      "notes": "Synthetic C-MAPSS FD001 uncensored run-to-failure case."
+    },
+    {
+      "case_id": "cmapss_fd001_admin_censored_04",
+      "dataset": "cmapss_fd001",
+      "unit_id": "FD001-004",
+      "anchor_time": "2026-04-20T06:00:00Z",
+      "sequence_length": 112,
+      "horizon_grid": [
+        5,
+        10,
+        20,
+        40
+      ],
+      "duration": 14.2,
+      "event": 0,
+      "event_type": "right_censored",
+      "censoring_type": "administrative_censoring_0.3",
+      "feature_summary": "healthy-looking segment truncated by administrative censoring",
+      "expected_behavior": "This should behave as a stress-test example for censoring-aware survival modeling.",
+      "notes": "Synthetic C-MAPSS FD001 administratively censored at 0.3."
+    },
+    {
+      "case_id": "cmapss_fd004_multiregime_05",
+      "dataset": "cmapss_fd004",
+      "unit_id": "FD004-005",
+      "anchor_time": "2026-03-10T09:15:00Z",
+      "sequence_length": 140,
+      "horizon_grid": [
+        8,
+        16,
+        24,
+        32
+      ],
+      "duration": 26.0,
+      "event": 1,
+      "event_type": "observed_failure",
+      "censoring_type": "none",
+      "feature_summary": "multi-regime operating profile with a regime shift late in life",
+      "expected_behavior": "The case should demonstrate a more complex sequence context while still ending in an observed failure.",
+      "notes": "Synthetic C-MAPSS FD004 multi-regime uncensored case."
+    },
+    {
+      "case_id": "scania_high_censor_06",
+      "dataset": "scania",
+      "unit_id": "SC-2001",
+      "anchor_time": "2026-05-10T07:45:00Z",
+      "sequence_length": 64,
+      "horizon_grid": [
+        7,
+        14,
+        28,
+        56
+      ],
+      "duration": 19.5,
+      "event": 0,
+      "event_type": "right_censored",
+      "censoring_type": "high_censoring",
+      "feature_summary": "mostly stable telemetry with sparse warning-like fluctuations",
+      "expected_behavior": "High censoring should be reflected in conservative survival estimates and careful calibration.",
+      "notes": "Synthetic Scania high-censoring case."
+    },
+    {
+      "case_id": "short_padded_sequence_07",
+      "dataset": "azure",
+      "unit_id": "AZ-1007",
+      "anchor_time": "2026-05-15T12:00:00Z",
+      "sequence_length": 8,
+      "horizon_grid": [
+        4,
+        8,
+        16,
+        32
+      ],
+      "duration": 8.0,
+      "event": 0,
+      "event_type": "right_censored",
+      "censoring_type": "padded_short_sequence",
+      "feature_summary": "short observation window with explicit left-padding and few real timesteps",
+      "expected_behavior": "Padding-aware preprocessing should preserve the short sequence without leaking padding into the feature set.",
+      "notes": "Synthetic short sequence with padding."
+    },
+    {
+      "case_id": "missing_sensor_values_08",
+      "dataset": "scania",
+      "unit_id": "SC-2008",
+      "anchor_time": "2026-05-18T11:20:00Z",
+      "sequence_length": 88,
+      "horizon_grid": [
+        6,
+        12,
+        24,
+        48
+      ],
+      "duration": 23.0,
+      "event": 1,
+      "event_type": "observed_failure",
+      "censoring_type": "none",
+      "feature_summary": "sensor series includes scattered missing values and imputation markers",
+      "expected_behavior": "Missingness should be handled as metadata or preprocessing input, not as a proxy label.",
+      "notes": "Synthetic missing sensor values case."
+    }
+  ]
+}

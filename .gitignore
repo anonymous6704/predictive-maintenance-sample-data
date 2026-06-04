@@ -1,0 +1,15 @@
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+*.zip
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.joblib
+outputs/logs/
+outputs/checkpoints/
+data/raw/
+data/frames/

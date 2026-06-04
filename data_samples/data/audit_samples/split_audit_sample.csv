@@ -1,0 +1,7 @@
+dataset,censoring_rate,seed,train_units,calibration_units,validation_units,test_units,overlap_unit_count,status
+azure,0.0,0,8,2,2,2,0,pass
+scania,0.0,0,12,3,3,2,0,pass
+cmapss_fd001,0.0,0,6,1,1,2,0,pass
+cmapss_fd001,0.3,0,6,1,1,2,0,pass
+cmapss_fd004,0.0,0,6,1,1,2,0,pass
+cmapss_fd004,0.3,0,6,1,1,2,0,pass

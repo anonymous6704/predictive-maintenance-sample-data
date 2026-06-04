@@ -1,0 +1,7 @@
+dataset,censoring_rate,samples,units,event_rate,censoring_rate_observed,duration_median,padding_rate,missing_rate,fallback,status
+azure,0.0,120,14,0.42,0.08,18.4,0.01,0.02,false,pass
+scania,0.0,160,20,0.31,0.11,21.7,0.02,0.03,false,pass
+cmapss_fd001,0.0,100,10,0.55,0.0,16.2,0.0,0.01,false,pass
+cmapss_fd001,0.3,100,10,0.37,0.28,14.8,0.01,0.01,false,pass
+cmapss_fd004,0.0,100,10,0.51,0.0,20.1,0.0,0.02,false,pass
+cmapss_fd004,0.3,100,10,0.33,0.29,17.6,0.02,0.02,false,pass

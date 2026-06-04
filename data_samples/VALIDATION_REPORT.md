@@ -44,5 +44,19 @@
 - PASS: Feature leakage audit status - All leakage audit statuses are pass/passed.
 - PASS: Split audit status - All split audit statuses are pass/passed.
 - PASS: Split audit overlap - All overlap_unit_count values are 0.
+- PASS: Processed mini folder exists - data_samples\data\processed_mini_samples exists.
+- PASS: Quick view folder exists - data_samples\data\quick_view exists.
+- PASS: Mini manifest exists - data_samples\data\processed_mini_samples\mini_sample_manifest.csv exists.
+- PASS: Frame inspection report exists - data_samples\data\processed_mini_samples\FRAME_INSPECTION_REPORT.md exists.
+- PASS: Mini manifest file coverage - All files referenced by the manifest exist.
+- PASS: Mini manifest validity - Manifest rows are well formed.
+- PASS: Mini CSV file sizes - All mini CSV files are under 10 MB.
+- PASS: Mini CSV readability - All mini CSV files load successfully.
+- PASS: Mini CSV value ranges - All mini CSV rows satisfy the required checks.
+- PASS: Mini CSV event coverage - At least one mini CSV contains event=1.
+- PASS: Mini CSV censoring coverage - At least one mini CSV contains event=0.
+- PASS: Quick view coverage - All quick-view files exist.
+- PASS: Forbidden artifacts - No forbidden binary artifacts found in data_samples.
+- PASS: Source frame paths - No local paths found in source_frame fields.
 - PASS: Forbidden folder names - No forbidden folder names found.
 - PASS: Raw benchmark claim scan - No forbidden raw/full benchmark inclusion claims found.

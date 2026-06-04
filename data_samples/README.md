@@ -4,12 +4,15 @@
 
 This folder documents the sample data formats used by OCEAN-MO-CDSF for censored predictive-maintenance survival analysis.
 
+The repository contains illustrative sample structures, not the full benchmark dataset.
+
 ## Purpose
 
 - Inspect the expected survival-frame schema
 - Understand event and censoring labels
 - Understand audit-table formats
 - Understand model-result and HPO-trace formats
+- Review processed mini samples extracted from real processed frames
 - Run lightweight validation without full raw datasets
 
 ## Dataset Components
@@ -21,8 +24,10 @@ This folder documents the sample data formats used by OCEAN-MO-CDSF for censored
 | Audit samples | `data/audit_samples/` | Data, leakage, and split audit examples | `dataset_audit_sample.csv`, `feature_leakage_audit_sample.csv`, `split_audit_sample.csv` |
 | Result samples | `data/result_samples/` | Benchmark metric table example | `model_result_sample.csv` |
 | HPO samples | `data/hpo_samples/` | Selected config and candidate trace examples | `hpo_selected_config_sample.json`, `hpo_candidate_trace_sample.csv` |
+| Processed mini samples | `data/processed_mini_samples/` | Anonymized subsets extracted from processed survival frames | `mini_sample_manifest.csv`, mini survival-frame CSVs |
+| Quick view | `data/quick_view/` | Convenience copies for quick inspection | `survival_frame_sample.csv`, `model_result_sample.csv`, `hpo_candidate_trace_sample.csv`, `sample_survival_cases.json`, `mini_sample_manifest.csv` |
 
-If present, `data/quick_view/` may provide convenience copies and `data/processed_mini_samples/` may provide small processed or anonymized mini frames.
+The structured folders are authoritative. If present, `data/quick_view/` only provides convenience copies. If present, `data/processed_mini_samples/` contains extracted subsets from processed survival frames.
 
 ## Directory Tree
 
@@ -38,7 +43,9 @@ data_samples/
     ├── survival_frame_samples/
     ├── audit_samples/
     ├── result_samples/
-    └── hpo_samples/
+    ├── hpo_samples/
+    ├── processed_mini_samples/
+    └── quick_view/
 ```
 
 ## Usage Examples
@@ -72,6 +79,11 @@ print(results.sort_values("validation_calibrated_monotone_ipcw_ibs").head())
 ```python
 trace = pd.read_csv("data_samples/data/hpo_samples/hpo_candidate_trace_sample.csv")
 print(trace.groupby(["model", "fidelity_level"]).size())
+```
+
+```python
+mini = pd.read_csv("data_samples/data/processed_mini_samples/cmapss_fd001_0p3_mini_survival_frame.csv")
+print(mini[["duration", "event", "censoring_rate"]].describe())
 ```
 
 ## Event and Censoring Interpretation

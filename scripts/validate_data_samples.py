@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -100,6 +101,11 @@ def check_required_files() -> Check:
         DATA_SAMPLES_ROOT / "data" / "hpo_samples" / "README.md",
         DATA_SAMPLES_ROOT / "data" / "hpo_samples" / "hpo_selected_config_sample.json",
         DATA_SAMPLES_ROOT / "data" / "hpo_samples" / "hpo_candidate_trace_sample.csv",
+        DATA_SAMPLES_ROOT / "data" / "processed_mini_samples" / "README.md",
+        DATA_SAMPLES_ROOT / "data" / "processed_mini_samples" / "mini_sample_manifest.csv",
+        DATA_SAMPLES_ROOT / "data" / "processed_mini_samples" / "FRAME_INSPECTION_REPORT.md",
+        DATA_SAMPLES_ROOT / "data" / "quick_view" / "README.md",
+        DATA_SAMPLES_ROOT / "data" / "quick_view" / "mini_sample_manifest.csv",
     ]
     missing = [str(path.relative_to(REPO_ROOT)) for path in required if not path.exists()]
     if missing:
@@ -447,6 +453,141 @@ def check_no_raw_benchmark_claims() -> list[Check]:
     return checks
 
 
+def check_processed_mini_samples() -> list[Check]:
+    checks: list[Check] = []
+    processed_root = DATA_SAMPLES_ROOT / "data" / "processed_mini_samples"
+    quick_view_root = DATA_SAMPLES_ROOT / "data" / "quick_view"
+    manifest_path = processed_root / "mini_sample_manifest.csv"
+    report_path = processed_root / "FRAME_INSPECTION_REPORT.md"
+
+    checks.append(Check("Processed mini folder exists", processed_root.exists(), f"{processed_root.relative_to(REPO_ROOT)} exists." if processed_root.exists() else f"{processed_root.relative_to(REPO_ROOT)} is missing."))
+    checks.append(Check("Quick view folder exists", quick_view_root.exists(), f"{quick_view_root.relative_to(REPO_ROOT)} exists." if quick_view_root.exists() else f"{quick_view_root.relative_to(REPO_ROOT)} is missing."))
+    checks.append(Check("Mini manifest exists", manifest_path.exists(), f"{manifest_path.relative_to(REPO_ROOT)} exists." if manifest_path.exists() else f"{manifest_path.relative_to(REPO_ROOT)} is missing."))
+    checks.append(Check("Frame inspection report exists", report_path.exists(), f"{report_path.relative_to(REPO_ROOT)} exists." if report_path.exists() else f"{report_path.relative_to(REPO_ROOT)} is missing."))
+
+    if manifest_path.exists():
+        rows = load_csv(manifest_path)
+        required_files = []
+        for row in rows:
+            file_name = as_str(row.get("file_name"))
+            if file_name:
+                required_files.append(processed_root / file_name)
+        missing_files = [str(path.relative_to(REPO_ROOT)) for path in required_files if not path.exists()]
+        checks.append(Check("Mini manifest file coverage", not missing_files, "All files referenced by the manifest exist." if not missing_files else "Missing files: " + ", ".join(missing_files)))
+
+        manifest_issues = []
+        for idx, row in enumerate(rows, start=1):
+            source_type = as_str(row.get("source_type"))
+            anonymized = row.get("anonymized")
+            source_frame = as_str(row.get("source_frame"))
+            if source_type not in {"processed_frame_subset", "illustrative_synthetic"}:
+                manifest_issues.append(f"row {idx} invalid source_type")
+            if not is_bool_like(anonymized):
+                manifest_issues.append(f"row {idx} anonymized not boolean-like")
+            if any(token in source_frame for token in ["C:\\", "/Users/", "/", "\\"]):
+                manifest_issues.append(f"row {idx} source_frame contains local path")
+            for field in ["num_rows", "num_units", "event_rate", "censoring_rate_observed", "duration_min", "duration_median", "duration_max"]:
+                try:
+                    value = as_float(row[field])
+                    if math.isnan(value) or math.isinf(value):
+                        raise ValueError("invalid numeric")
+                except Exception:
+                    manifest_issues.append(f"row {idx} invalid {field}")
+        checks.append(Check("Mini manifest validity", not manifest_issues, "Manifest rows are well formed." if not manifest_issues else "; ".join(manifest_issues)))
+
+    mini_csvs = sorted(processed_root.glob("*_mini_survival_frame.csv"))
+    size_issues = []
+    load_issues = []
+    value_issues = []
+    observed_event = False
+    observed_censored = False
+
+    for path in mini_csvs:
+        if path.stat().st_size >= 10 * 1024 * 1024:
+            size_issues.append(path.name)
+        try:
+            rows = load_csv(path)
+            if not rows:
+                raise ValueError("no rows")
+        except Exception as exc:
+            load_issues.append(f"{path.name}: {exc}")
+            continue
+
+        for idx, row in enumerate(rows, start=1):
+            try:
+                duration = as_float(row["duration"])
+                event = as_int(row["event"])
+                censoring_rate = as_float(row["censoring_rate"])
+                horizons = [as_int(row[f"horizon_{i}"]) for i in range(1, 5)]
+                missing_rate = as_float(row["missing_rate"])
+                padding_rate = as_float(row["padding_rate"])
+                source_frame = as_str(row["source_frame"])
+            except Exception as exc:
+                value_issues.append(f"{path.name} row {idx}: {exc}")
+                continue
+
+            observed_event = observed_event or event == 1
+            observed_censored = observed_censored or event == 0
+
+            if duration <= 0:
+                value_issues.append(f"{path.name} row {idx}: duration <= 0")
+            if event not in {0, 1}:
+                value_issues.append(f"{path.name} row {idx}: event not in {{0,1}}")
+            if not (0.0 <= censoring_rate <= 1.0):
+                value_issues.append(f"{path.name} row {idx}: censoring_rate outside [0,1]")
+            if not (horizons[0] <= horizons[1] <= horizons[2] <= horizons[3]):
+                value_issues.append(f"{path.name} row {idx}: horizons not monotone")
+            if not (0.0 <= missing_rate <= 1.0):
+                value_issues.append(f"{path.name} row {idx}: missing_rate outside [0,1]")
+            if not (0.0 <= padding_rate <= 1.0):
+                value_issues.append(f"{path.name} row {idx}: padding_rate outside [0,1]")
+            if any(token in source_frame for token in ["C:\\", "/Users/", "/", "\\"]):
+                value_issues.append(f"{path.name} row {idx}: source_frame contains local path")
+
+    checks.append(Check("Mini CSV file sizes", not size_issues, "All mini CSV files are under 10 MB." if not size_issues else "Files too large: " + ", ".join(size_issues)))
+    checks.append(Check("Mini CSV readability", not load_issues, "All mini CSV files load successfully." if not load_issues else "; ".join(load_issues)))
+    checks.append(Check("Mini CSV value ranges", not value_issues, "All mini CSV rows satisfy the required checks." if not value_issues else "; ".join(value_issues)))
+    if mini_csvs:
+        checks.append(Check("Mini CSV event coverage", observed_event, "At least one mini CSV contains event=1." if observed_event else "No mini CSV contains event=1."))
+        checks.append(Check("Mini CSV censoring coverage", observed_censored, "At least one mini CSV contains event=0." if observed_censored else "No mini CSV contains event=0."))
+
+    quick_files = [
+        quick_view_root / "survival_frame_sample.csv",
+        quick_view_root / "model_result_sample.csv",
+        quick_view_root / "hpo_candidate_trace_sample.csv",
+        quick_view_root / "sample_survival_cases.json",
+        quick_view_root / "mini_sample_manifest.csv",
+        quick_view_root / "README.md",
+    ]
+    quick_missing = [str(path.relative_to(REPO_ROOT)) for path in quick_files if not path.exists()]
+    checks.append(Check("Quick view coverage", not quick_missing, "All quick-view files exist." if not quick_missing else "Missing quick-view files: " + ", ".join(quick_missing)))
+    return checks
+
+
+def check_forbidden_artifacts() -> list[Check]:
+    checks: list[Check] = []
+    forbidden_suffixes = {".npz", ".zip", ".pt", ".pth", ".ckpt", ".pkl", ".joblib"}
+    bad_files = []
+    for path in DATA_SAMPLES_ROOT.rglob("*"):
+        if path.is_file() and path.suffix.lower() in forbidden_suffixes:
+            bad_files.append(str(path.relative_to(DATA_SAMPLES_ROOT)))
+    checks.append(Check("Forbidden artifacts", not bad_files, "No forbidden binary artifacts found in data_samples." if not bad_files else "Forbidden artifacts: " + ", ".join(bad_files)))
+    return checks
+
+
+def check_source_frame_paths() -> list[Check]:
+    manifest_path = DATA_SAMPLES_ROOT / "data" / "processed_mini_samples" / "mini_sample_manifest.csv"
+    if not manifest_path.exists():
+        return [Check("Source frame paths", False, "Manifest missing, cannot check source_frame values.")]
+    rows = load_csv(manifest_path)
+    bad = []
+    for idx, row in enumerate(rows, start=1):
+        source_frame = as_str(row.get("source_frame"))
+        if any(token in source_frame for token in ["C:\\", "/Users/", "/", "\\"]):
+            bad.append(f"row {idx}")
+    return [Check("Source frame paths", not bad, "No local paths found in source_frame fields." if not bad else "Local paths in rows: " + ", ".join(bad))]
+
+
 def write_report(checks: list[Check]) -> None:
     lines = [
         "# Data Samples Validation Report",
@@ -472,6 +613,9 @@ def main() -> int:
     checks.extend(check_hpo_json())
     checks.extend(check_result_sample())
     checks.extend(check_audit_samples())
+    checks.extend(check_processed_mini_samples())
+    checks.extend(check_forbidden_artifacts())
+    checks.extend(check_source_frame_paths())
     checks.append(check_forbidden_folder_names())
     checks.extend(check_no_raw_benchmark_claims())
 

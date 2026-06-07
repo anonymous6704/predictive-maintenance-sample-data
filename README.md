@@ -91,6 +91,8 @@ manually downloaded upstream files -> project-prepared CSV inputs -> project-com
 
 See [REPRODUCTION_GUIDE.md](REPRODUCTION_GUIDE.md) for the raw-file layout, CSV preparation commands, frame-building commands, and validation checks.
 
+Preprocessing configuration files are stored under `configs/preprocessing/`.
+
 The repository does not redistribute full raw datasets, full processed frames, trained weights, or model checkpoints.
 
 ## Main Data Format

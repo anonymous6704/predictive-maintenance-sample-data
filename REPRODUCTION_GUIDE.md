@@ -87,6 +87,8 @@ raw/
 
 ## Build NPZ Frames
 
+Configuration files are stored under `configs/preprocessing/`.
+
 Prepare project CSV inputs and build project-compatible `.npz` survival frames in one command:
 
 ```bash

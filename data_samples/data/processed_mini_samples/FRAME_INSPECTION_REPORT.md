@@ -44,6 +44,7 @@
 ## scania_0_frame.npz
 
 - Source frame: `scania_0_frame.npz`
+- Upstream provenance: SCANIA Component X-derived survival/time-to-event frame; not UCI APS Failure at Scania Trucks.
 - Shape: 151031 rows
 - Keys: x_seq, x_static, seq_mask, missing_mask, delta_t, duration, event, event_type, unit_id, anchor_time, dataset_name, feature_names_seq, feature_names_static, meta_json
 
@@ -76,7 +77,7 @@
 - Unique source units in sample: 300
 - Event counts: observed=26, censored=274
 - Original unit sample: 24459, 3458, 25672, 11469, 26267, 19303, 13851, 14700, 14911, 3517...
-- Notes: extracted deterministically with seed=0; horizon grid defaulted to [24, 72, 168, 336]; source_frame stores only the file name. Scania used a lightweight fallback for sequence summaries to keep extraction feasible on the large processed frame.
+- Notes: extracted deterministically with seed=0; horizon grid defaulted to [24, 72, 168, 336]; source_frame stores only the file name.
 
 ## cmapss_fd001_0_frame.npz
 

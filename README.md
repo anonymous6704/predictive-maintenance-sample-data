@@ -55,6 +55,24 @@ python scripts/extract_processed_mini_samples.py
 python scripts/validate_data_samples.py
 ```
 
+## Original dataset sources
+
+This repository provides lightweight sample files and derived mini frames only. It does not redistribute full raw datasets or full processed benchmark frames.
+
+Original upstream sources are documented in:
+
+- `data_samples/DATA_SOURCES.md`
+
+Dataset source summary:
+
+| Dataset ID | Upstream source |
+|---|---|
+| `azure` | Microsoft Azure Predictive Maintenance / PdM sample data |
+| `scania` | SCANIA Component X Dataset, DOI: https://doi.org/10.5878/bnh5-ka77 |
+| `cmapss_fd001`-`cmapss_fd004` | NASA C-MAPSS / Turbofan Engine Degradation Simulation Data Set |
+
+Important: in this repository, `scania` refers to SCANIA Component X, not UCI APS Failure at Scania Trucks.
+
 ## Main Data Format
 
 The central format is a multi-horizon survival frame with metadata columns, event and censoring labels, feature-summary columns, and a processed mini subset derived from the real pipeline frames.

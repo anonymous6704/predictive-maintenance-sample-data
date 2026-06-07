@@ -1,0 +1,19 @@
+datasets:
+  cmapss_fd004: true
+
+data_build:
+  sequence_length: 20
+  stride: 5
+  max_anchors_per_unit: 500
+  censoring_rates: [0.0, 0.1, 0.3, 0.5]
+  output_format: npz
+  force_rebuild: false
+  allow_synthetic_fallback: false
+  allow_short_sequences: false
+  horizons: [24, 72, 168, 336]
+
+censoring_rates_by_dataset:
+  cmapss_fd004: [0.0, 0.1, 0.3, 0.5]
+
+raw_roots:
+  - raw

@@ -73,6 +73,14 @@ Dataset source summary:
 
 Important: in this repository, `scania` refers to SCANIA Component X, not UCI APS Failure at Scania Trucks.
 
+## Raw-to-frame preprocessing scripts
+
+This repository includes the Python preprocessing scripts used to convert project-prepared CSV inputs derived from manually downloaded upstream datasets into project-compatible `.npz` survival frames.
+
+See [REPRODUCTION_GUIDE.md](REPRODUCTION_GUIDE.md).
+
+The repository does not redistribute full raw datasets, full processed frames, trained weights, or model checkpoints.
+
 ## Main Data Format
 
 The central format is a multi-horizon survival frame with metadata columns, event and censoring labels, feature-summary columns, and a processed mini subset derived from the real pipeline frames.

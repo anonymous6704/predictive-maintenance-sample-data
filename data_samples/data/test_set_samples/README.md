@@ -11,7 +11,7 @@ This folder provides small survival test-case examples for the OCEAN-MO-CDSF for
 
 ## Format Summary
 
-JSON array of compact case records with a companion JSON schema.
+JSON object with a `generated_for` field and a `cases` array, plus a companion JSON schema.
 
 ## Example JSON Snippet
 

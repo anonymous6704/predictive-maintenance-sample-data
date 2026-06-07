@@ -16,6 +16,7 @@
 - PASS: JSON load: data_samples/data/test_set_samples/sample_survival_cases_schema.json - Loaded successfully.
 - PASS: JSON load: data_samples/data/survival_frame_samples/survival_frame_schema.json - Loaded successfully.
 - PASS: JSON load: data_samples/data/hpo_samples/hpo_selected_config_sample.json - Loaded successfully.
+- PASS: Test set JSON structure - generated_for exists and cases contains at least 8 entries.
 - PASS: CSV load: data_samples/data/survival_frame_samples/survival_frame_sample.csv - Loaded 20 rows successfully.
 - PASS: CSV load: data_samples/data/survival_frame_samples/survival_frame_column_dictionary.csv - Loaded 19 rows successfully.
 - PASS: CSV load: data_samples/data/audit_samples/dataset_audit_sample.csv - Loaded 6 rows successfully.

@@ -75,7 +75,11 @@ Important: in this repository, `scania` refers to SCANIA Component X, not UCI AP
 
 ## Raw-to-frame preprocessing scripts
 
-This repository includes the Python preprocessing scripts used to convert project-prepared CSV inputs derived from manually downloaded upstream datasets into project-compatible `.npz` survival frames.
+This repository includes Python preprocessing scripts for the full local data-preparation chain:
+
+```text
+manually downloaded upstream files -> project-prepared CSV inputs -> project-compatible .npz survival frames
+```
 
 See [REPRODUCTION_GUIDE.md](REPRODUCTION_GUIDE.md).
 

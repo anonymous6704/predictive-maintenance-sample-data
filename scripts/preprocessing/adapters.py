@@ -70,7 +70,9 @@ def _candidate_roots(dataset: str, cfg: dict[str, Any], project_root: Path) -> l
     roots = []
     for raw_root in cfg.get("raw_roots", []):
         path = Path(raw_root)
-        roots.append(path if path.is_absolute() else project_root / path)
+        base = path if path.is_absolute() else project_root / path
+        roots.append(base)
+        roots.append(base / dataset)
     roots.extend([
         project_root / "data" / "raw" / dataset,
     ])

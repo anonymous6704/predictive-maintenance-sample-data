@@ -18,7 +18,7 @@ Compatibility edits:
 - CLI wrappers accept `--raw-root` and `--out-root` so generated `.npz` files are written outside the sample repository by default.
 - Synthetic fallback is not introduced by the wrappers.
 
-Important limitation:
+Frame-builder inputs:
 
 The main-project adapters currently start from project-prepared CSV files:
 
@@ -29,6 +29,18 @@ The main-project adapters currently start from project-prepared CSV files:
 - `raw/cmapss_fd003/cmapss_fd003.csv`
 - `raw/cmapss_fd004/cmapss_fd004.csv`
 
-No vendor-raw-to-project-CSV converter for Azure's five PdM files, NASA C-MAPSS text files, or SCANIA Component X upstream files was found in the main project during this export. To avoid inventing new preprocessing behavior, those converters are not recreated here. The exported code preserves the existing CSV-to-frame schema, label construction, anchor construction, and validation behavior.
+Upstream-to-CSV converters added in this sample-data repository:
+
+- `prepare_azure_pdm_csv.py`
+- `prepare_scania_component_x_csv.py`
+- `prepare_cmapss_csv.py`
+- `prepare_all_csvs.py`
+- `upstream_converters.py`
+
+No separate vendor-raw-to-project-CSV converter was found in the main project during the export. The files above were added here to complete the documented reproduction chain from manually downloaded upstream files to project CSV inputs, while keeping that new preparation layer separate from the copied CSV-to-frame code.
+
+The exported frame-builder code preserves the existing CSV-to-frame schema, label construction, anchor construction, and validation behavior.
+
+The SCANIA converter uses the public train split, where `train_tte.csv` supplies observed time-to-event labels. The public validation/test labels are class labels for challenge evaluation, not full per-row survival durations.
 
 `scania` means SCANIA Component X-derived survival/time-series data. UCI APS Failure at Scania Trucks is not accepted as the Scania source for these scripts.

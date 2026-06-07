@@ -45,11 +45,23 @@ raw/
     RUL_FD004.txt
 ```
 
-## Project-Prepared CSV Inputs
+## Prepare Project CSV Inputs
 
-The main-project preprocessing adapters exported here start from project-prepared CSV files. No vendor-raw-to-project-CSV converter was found in the main project during export, so this sample repository does not invent one.
+The frame builders consume project-prepared CSV files. This repository now includes lightweight converter scripts for the upstream file layouts documented above:
 
-To build frames with the exported adapter logic, provide:
+```bash
+python scripts/preprocessing/prepare_all_csvs.py --raw-root raw
+```
+
+Equivalent per-dataset commands:
+
+```bash
+python scripts/preprocessing/prepare_azure_pdm_csv.py --raw-root raw
+python scripts/preprocessing/prepare_scania_component_x_csv.py --raw-root raw
+python scripts/preprocessing/prepare_cmapss_csv.py --raw-root raw
+```
+
+These commands write:
 
 ```text
 raw/
@@ -71,6 +83,8 @@ raw/
 
 `scania_survival_samples.csv` means SCANIA Component X-derived survival/time-series data. It is not UCI APS Failure at Scania Trucks.
 
+The SCANIA Component X converter uses `train_operational_readouts.csv`, `train_tte.csv`, and `train_specifications.csv`, because the public train split contains observed time-to-event labels. The public validation/test labels are class labels for challenge evaluation, not full per-row time-to-event records.
+
 ## Commands
 
 Verify raw inputs:
@@ -79,7 +93,13 @@ Verify raw inputs:
 python scripts/preprocessing/verify_raw_data.py --config configs/preprocessing/build_all.yaml --raw-root raw
 ```
 
-Build project-compatible `.npz` survival frames:
+Prepare project CSV inputs and build project-compatible `.npz` survival frames in one command:
+
+```bash
+python scripts/preprocessing/build_all_frames.py --config configs/preprocessing/build_all.yaml --raw-root raw --out-root outputs/frames --prepare-from-upstream
+```
+
+Or build frames after CSV preparation:
 
 ```bash
 python scripts/preprocessing/build_all_frames.py --config configs/preprocessing/build_all.yaml --raw-root raw --out-root outputs/frames
@@ -109,4 +129,4 @@ Preprocessing creates `.npz` survival frames only. Training, model selection, ca
 
 Validation metrics are used for model selection in the full project. Test metrics are reported only after model or configuration selection is fixed.
 
-This repository is not sufficient to reproduce paper-scale benchmark metrics by itself. Full reproduction requires upstream data, project-prepared CSV construction where applicable, `.npz` frame generation, training, validation-based model selection, and final test reporting.
+This repository is not sufficient to reproduce paper-scale benchmark metrics by itself. Full reproduction requires upstream data, project-prepared CSV construction, `.npz` frame generation, training, validation-based model selection, and final test reporting.

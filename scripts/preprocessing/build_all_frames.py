@@ -9,6 +9,20 @@ from common import add_common_build_args, active_datasets, load_config, rates_fo
 from frame_validator import export_audit, validate_frame
 from logging_utils import log
 from splits import make_unit_splits
+from upstream_converters import prepare_azure_csv, prepare_cmapss_csv, prepare_scania_component_x_csv
+
+
+def prepare_project_csvs(args: argparse.Namespace) -> list[Path]:
+    cfg = load_config(args.config, args.raw_root)
+    written: list[Path] = []
+    for dataset in active_datasets(cfg, args.datasets):
+        if dataset == "azure":
+            written.append(prepare_azure_csv(args.raw_root))
+        elif dataset == "scania":
+            written.append(prepare_scania_component_x_csv(args.raw_root))
+        elif dataset.startswith("cmapss_"):
+            written.append(prepare_cmapss_csv(args.raw_root, dataset.split("_")[1].upper()))
+    return written
 
 
 def build_dataset_frames(args: argparse.Namespace) -> list[Path]:
@@ -50,7 +64,12 @@ def build_dataset_frames(args: argparse.Namespace) -> list[Path]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build project-compatible .npz survival frames from project-prepared raw CSV inputs.")
     add_common_build_args(parser)
+    parser.add_argument("--prepare-from-upstream", action="store_true", help="First convert downloaded upstream files into project CSV inputs.")
     args = parser.parse_args()
+    if args.prepare_from_upstream:
+        prepared = prepare_project_csvs(args)
+        for path in prepared:
+            log("PREPARE", f"project CSV written to {path}")
     written = build_dataset_frames(args)
     print(f"Built or reused {len(written)} frame(s).")
 

@@ -43,7 +43,8 @@ def main() -> None:
     if problems:
         raise SystemExit(
             "Missing project-prepared CSV inputs for frame building. "
-            "See PORTING_NOTES.md: the exported main-project adapters preserve existing CSV-to-frame logic and do not invent vendor-raw converters."
+            "If upstream files are present, run `python scripts/preprocessing/prepare_all_csvs.py --raw-root raw`, "
+            "then run this verifier again."
         )
 
 

@@ -14,6 +14,7 @@ This repository provides small illustrative data samples for the OCEAN-MO-CDSF f
 - Processed mini samples extracted from processed survival-frame `.npz` files
 - Quick-view convenience copies
 - Validation scripts
+- Raw-to-frame preprocessing scripts
 
 ## What This Repository Does Not Contain
 
@@ -26,25 +27,32 @@ This repository provides small illustrative data samples for the OCEAN-MO-CDSF f
 
 ```text
 predictive-maintenance-sample-data/
-├── README.md
-├── .gitignore
-├── scripts/
-│   ├── create_data_samples.py
-│   ├── extract_processed_mini_samples.py
-│   └── validate_data_samples.py
-└── data_samples/
-    ├── README.md
-    ├── data_format_specification.md
-    ├── VALIDATION_REPORT.md
-    └── data/
-        ├── README.md
-        ├── test_set_samples/
-        ├── survival_frame_samples/
-        ├── audit_samples/
-        ├── result_samples/
-        ├── hpo_samples/
-        ├── processed_mini_samples/
-        └── quick_view/
+|-- README.md
+|-- REPRODUCTION_GUIDE.md
+|-- configs/
+|   `-- preprocessing/
+|-- scripts/
+|   |-- create_data_samples.py
+|   |-- extract_processed_mini_samples.py
+|   |-- validate_data_samples.py
+|   `-- preprocessing/
+|       |-- prepare_all_csvs.py
+|       |-- build_all_frames.py
+|       |-- verify_raw_data.py
+|       `-- validate_npz_frames.py
+`-- data_samples/
+    |-- README.md
+    |-- DATA_SOURCES.md
+    |-- data_format_specification.md
+    |-- VALIDATION_REPORT.md
+    `-- data/
+        |-- test_set_samples/
+        |-- survival_frame_samples/
+        |-- audit_samples/
+        |-- result_samples/
+        |-- hpo_samples/
+        |-- processed_mini_samples/
+        `-- quick_view/
 ```
 
 ## Quick Start
@@ -55,7 +63,7 @@ python scripts/extract_processed_mini_samples.py
 python scripts/validate_data_samples.py
 ```
 
-## Original dataset sources
+## Original Dataset Sources
 
 This repository provides lightweight sample files and derived mini frames only. It does not redistribute full raw datasets or full processed benchmark frames.
 
@@ -66,16 +74,18 @@ Original upstream sources are documented in:
 Dataset source summary:
 
 | Dataset ID | Upstream source |
-|---|---|
+| --- | --- |
 | `azure` | Microsoft Azure Predictive Maintenance / PdM sample data |
 | `scania` | SCANIA Component X Dataset, DOI: https://doi.org/10.5878/bnh5-ka77 |
 | `cmapss_fd001`-`cmapss_fd004` | NASA C-MAPSS / Turbofan Engine Degradation Simulation Data Set |
 
 Important: in this repository, `scania` refers to SCANIA Component X, not UCI APS Failure at Scania Trucks.
 
-## Raw-to-frame preprocessing scripts
+## Raw-to-frame Preprocessing
 
-This repository includes Python preprocessing scripts for the full local data-preparation chain:
+The repository includes preprocessing scripts under `scripts/preprocessing/` for converting manually downloaded upstream data into project-compatible `.npz` survival frames.
+
+The local data-preparation chain is:
 
 ```text
 manually downloaded upstream files -> project-prepared CSV inputs -> project-compatible .npz survival frames

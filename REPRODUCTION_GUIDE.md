@@ -1,6 +1,8 @@
 # Reproduction Guide
 
-This repository contains preprocessing scripts exported from the main OCEAN-MO-CDSF project. It does not contain full raw datasets, full processed `.npz` frames, trained weights, model checkpoints, or full benchmark results.
+This repository contains preprocessing scripts exported from the main OCEAN-MO-CDSF project, plus small wrapper scripts for preparing downloaded upstream files into the CSV inputs expected by those frame builders.
+
+It does not contain full raw datasets, full processed `.npz` frames, trained weights, model checkpoints, or full benchmark results.
 
 Users must manually download upstream data from the links in:
 
@@ -47,7 +49,7 @@ raw/
 
 ## Prepare Project CSV Inputs
 
-The frame builders consume project-prepared CSV files. This repository now includes lightweight converter scripts for the upstream file layouts documented above:
+The frame builders consume project-prepared CSV files. Convert the upstream file layouts above with:
 
 ```bash
 python scripts/preprocessing/prepare_all_csvs.py --raw-root raw

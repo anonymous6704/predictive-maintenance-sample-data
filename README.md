@@ -67,9 +67,7 @@ python scripts/validate_data_samples.py
 
 This repository provides lightweight sample files and derived mini frames only. It does not redistribute full raw datasets or full processed benchmark frames.
 
-Original upstream sources are documented in:
-
-- `data_samples/DATA_SOURCES.md`
+Original upstream sources are documented in [data_samples/DATA_SOURCES.md](data_samples/DATA_SOURCES.md).
 
 Dataset source summary:
 
@@ -91,7 +89,7 @@ The local data-preparation chain is:
 manually downloaded upstream files -> project-prepared CSV inputs -> project-compatible .npz survival frames
 ```
 
-See [REPRODUCTION_GUIDE.md](REPRODUCTION_GUIDE.md).
+See [REPRODUCTION_GUIDE.md](REPRODUCTION_GUIDE.md) for the raw-file layout, CSV preparation commands, frame-building commands, and validation checks.
 
 The repository does not redistribute full raw datasets, full processed frames, trained weights, or model checkpoints.
 

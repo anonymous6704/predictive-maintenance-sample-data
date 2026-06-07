@@ -1,12 +1,14 @@
 # Reproduction Guide
 
+## Scope
+
 This repository contains preprocessing scripts exported from the main OCEAN-MO-CDSF project, plus small wrapper scripts for preparing downloaded upstream files into the CSV inputs expected by those frame builders.
 
 It does not contain full raw datasets, full processed `.npz` frames, trained weights, model checkpoints, or full benchmark results.
 
-Users must manually download upstream data from the links in:
+## Upstream Data Sources
 
-- `data_samples/DATA_SOURCES.md`
+Users must manually download upstream data from the links in [data_samples/DATA_SOURCES.md](data_samples/DATA_SOURCES.md).
 
 ## Expected Raw Directory Layout
 
@@ -49,7 +51,7 @@ raw/
 
 ## Prepare Project CSV Inputs
 
-The frame builders consume project-prepared CSV files. Convert the upstream file layouts above with:
+The frame builders consume project-prepared CSV files. Convert all supported upstream layouts with:
 
 ```bash
 python scripts/preprocessing/prepare_all_csvs.py --raw-root raw
@@ -83,17 +85,7 @@ raw/
     cmapss_fd004.csv
 ```
 
-`scania_survival_samples.csv` means SCANIA Component X-derived survival/time-series data. It is not UCI APS Failure at Scania Trucks.
-
-The SCANIA Component X converter uses `train_operational_readouts.csv`, `train_tte.csv`, and `train_specifications.csv`, because the public train split contains observed time-to-event labels. The public validation/test labels are class labels for challenge evaluation, not full per-row time-to-event records.
-
-## Commands
-
-Verify raw inputs:
-
-```bash
-python scripts/preprocessing/verify_raw_data.py --config configs/preprocessing/build_all.yaml --raw-root raw
-```
+## Build NPZ Frames
 
 Prepare project CSV inputs and build project-compatible `.npz` survival frames in one command:
 
@@ -107,11 +99,27 @@ Or build frames after CSV preparation:
 python scripts/preprocessing/build_all_frames.py --config configs/preprocessing/build_all.yaml --raw-root raw --out-root outputs/frames
 ```
 
-Validate generated frames:
+## Validate Generated Frames
+
+Verify raw and prepared inputs:
+
+```bash
+python scripts/preprocessing/verify_raw_data.py --config configs/preprocessing/build_all.yaml --raw-root raw
+```
+
+Validate generated frame files:
 
 ```bash
 python scripts/preprocessing/validate_npz_frames.py --frames-root outputs/frames
 ```
+
+Validate lightweight sample artifacts:
+
+```bash
+python scripts/validate_data_samples.py
+```
+
+## Extract Mini Samples
 
 Extract lightweight mini samples from generated frames:
 
@@ -119,16 +127,16 @@ Extract lightweight mini samples from generated frames:
 python scripts/extract_processed_mini_samples.py --frames-root outputs/frames
 ```
 
-Validate sample artifacts:
+## SCANIA Component X Note
 
-```bash
-python scripts/validate_data_samples.py
-```
+- `scania_survival_samples.csv` means SCANIA Component X-derived survival/time-series data.
+- It is not UCI APS Failure at Scania Trucks.
+- The converter uses train split TTE labels because public validation/test labels are challenge class labels, not full per-row time-to-event labels.
 
-## Scope
+## Evaluation Boundary
 
-Preprocessing creates `.npz` survival frames only. Training, model selection, calibration, and test reporting happen outside this sample-data repository.
-
-Validation metrics are used for model selection in the full project. Test metrics are reported only after model or configuration selection is fixed.
-
-This repository is not sufficient to reproduce paper-scale benchmark metrics by itself. Full reproduction requires upstream data, project-prepared CSV construction, `.npz` frame generation, training, validation-based model selection, and final test reporting.
+- Preprocessing creates `.npz` survival frames only.
+- Training, model selection, calibration, and test reporting happen outside this sample-data repository.
+- Validation metrics are used for model selection in the full project.
+- Test metrics are reported only after model or configuration selection is fixed.
+- This repository alone is not sufficient to reproduce paper-scale benchmark metrics.
